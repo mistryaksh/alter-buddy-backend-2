@@ -1,0 +1,9 @@
+{
+     "DB_PATH": "mongodb+srv://mistryaksh1998:Oi0NKcWPa7iLFfEi@cluster0.wkykxg8.mongodb.net/?retryWrites=true&w=majority",
+     "JWT_SECRET": "JSONWEBTOKENSECRET",
+     "NODE_NO_WARNINGS": 1,
+     "SUPPRESS_NO_CONFIG_WARNING": false,
+     "JWT_EXPIRE": "3d",
+     "REACT_APP_VIDEO_SDK_KEY": "947ade2c-59a7-4d67-953c-634570a6e678",
+     "REACT_APP_VIDEO_SDK_SECRET": "5ad4027c6c39f4eab63e56e0009c42b5ecaa7ca70686b8953ba0ae0033dce92c"
+}
