@@ -7,6 +7,7 @@ import { errorHandler, notFoundMiddleware } from "./middleware";
 import { registerRoutesV1 } from "api";
 import cookieParser from "cookie-parser";
 import config from "config";
+import FastlyCors from 'fastify-cors'
 
 class App {
      express: Express;
@@ -25,10 +26,12 @@ class App {
           this.express.use(bodyParser.json());
           this.express.use(bodyParser.urlencoded({ extended: true }));
           this.express.use(express.json());
+          this.express.use(this.useCorsMiddleware);
           this.express.use(express.text());
           this.express.use(
                cors({
                     origin: "*",
+                    allowedHeaders: ["Authorization"],
                })
           );
           this.express.set("ipaddr", "127.0.0.1");
@@ -39,6 +42,17 @@ class App {
 
      private useErrorHandler() {
           this.express.use(errorHandler);
+     }
+
+     private useCorsMiddleware(req: Request, res: Response, next: NextFunction) {
+          res.setHeader("Access-Control-Allow-Origin", [
+               "https://alterbuddy.com",
+               "https://alterbuddyadmin.netlify.app",
+          ]);
+          res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+          res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+          res.setHeader("Access-Control-Allow-Credentials", "true");
+          next();
      }
 
      private useNotFoundMiddleware() {
