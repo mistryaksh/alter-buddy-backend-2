@@ -1,0 +1,17 @@
+{
+     "apps": [
+          {
+               "name": "alter-buddy-backend",
+               "script": "npm",
+               "args": "start",
+               "env": {
+                    "DB_PATH": "mongodb+srv://mistryaksh1998:Oi0NKcWPa7iLFfEi@cluster0.wkykxg8.mongodb.net/?retryWrites=true&w=majority",
+                    "JWT_SECRET": "JSONWEBTOKENSECRET",
+                    "NODE_NO_WARNINGS": 1,
+                    "SUPPRESS_NO_CONFIG_WARNING": false,
+                    "JWT_EXPIRE": "3d",
+                    "NODE_ENV": "development"
+               }
+          }
+     ]
+}
