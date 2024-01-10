@@ -7,7 +7,6 @@ import { errorHandler, notFoundMiddleware } from "./middleware";
 import { registerRoutesV1 } from "api";
 import cookieParser from "cookie-parser";
 import config from "config";
-import FastlyCors from 'fastify-cors'
 
 class App {
      express: Express;
