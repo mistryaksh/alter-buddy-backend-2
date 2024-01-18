@@ -37,8 +37,7 @@
      "scripts": {
           "clean": "rimraf ./build/* && rimraf ./logs/*",
           "lint": "tslint -c tslint.json 'src/**/*.ts'",
-          "start": "nodemon --watch 'src/**/*' -e ts --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/bin/www.ts",
-          "build": "npm run build"
+          "start": "nodemon --watch 'src/**/*' -e ts --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/bin/www.ts"
      },
      "dependencies": {
           "@types/method-override": "^0.0.35",
