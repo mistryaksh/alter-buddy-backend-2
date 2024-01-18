@@ -2,7 +2,6 @@
      "name": "backend-2",
      "version": "1.0.0",
      "description": "",
-     "main": "./src/index.js",
      "author": "",
      "license": "ISC",
      "devDependencies": {
@@ -38,7 +37,7 @@
      "scripts": {
           "clean": "rimraf ./build/* && rimraf ./logs/*",
           "lint": "tslint -c tslint.json 'src/**/*.ts'",
-          "start": "set NODE_ENV=development && cross-env DEBUG=app:* nodemon --watch 'src/**/*' -e ts --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/bin/www.ts",
+          "start": "nodemon --watch 'src/**/*' -e ts --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/bin/www.ts",
           "build": "npm run build"
      },
      "dependencies": {
