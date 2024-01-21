@@ -3,7 +3,7 @@ import app from "../index";
 import { normalizePort } from "../utils";
 import { Server } from "socket.io";
 import { Chat, Mentor, User } from "model";
-const port = normalizePort(process.env.PORT || 8888);
+const port = normalizePort(process.env.PORT || 8080);
 app.set("port", port);
 
 export const server = http.createServer(app);
