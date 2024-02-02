@@ -25,30 +25,16 @@ class App {
           this.express.use(bodyParser.json());
           this.express.use(bodyParser.urlencoded({ extended: true }));
           this.express.use(express.json());
-          this.express.use(this.useCorsMiddleware);
           this.express.use(express.text());
-          this.express.use(
-               cors({
-                    origin: "*",
-                    allowedHeaders: ["Authorization"],
-               })
-          );
           this.express.set("ipaddr", "127.0.0.1");
           this.express.set("port", 8080);
           this.express.use(cookieParser());
           this.express.use(morgan("dev"));
+          this.express.use(cors({ origin: "*" }));
      }
 
      private useErrorHandler() {
           this.express.use(errorHandler);
-     }
-
-     private useCorsMiddleware(req: Request, res: Response, next: NextFunction) {
-          res.setHeader("Access-Control-Allow-Origin", "*");
-          res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-          res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-          res.setHeader("Access-Control-Allow-Credentials", "true");
-          next();
      }
 
      private useNotFoundMiddleware() {
