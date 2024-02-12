@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import config from "config";
 import { IUserProps } from "interface/user.interface";
 import { AuthForAdmin, AuthForMentor, AuthForUser } from "middleware";
+import Nodemailer, { SendMailOptions } from "nodemailer";
 
 export class AuthenticationController implements IController {
      public routes: IControllerRoutes[] = [];
@@ -147,17 +148,45 @@ export class AuthenticationController implements IController {
                     if (mentor) {
                          return UnAuthorized(res, "mentor is already registered");
                     }
+
                     const newMentor = await new Mentor({
                          auth: {
                               password: bcrypt.hashSync(auth.password, 10),
                          },
                          ...req.body,
                     }).save();
+
+                    var mailOptions: SendMailOptions = {
+                         from: "alterbuddy8@gmail.com",
+                         to: newMentor.contact.email,
+                         subject: "Sending Email using Node.js",
+                         html: `Hello ${name.firstName} ${name.lastName},
+                    <br/>
+                    Your account on our mentor panel is registered successfully please mark your attention on this  mail this mail has your account credentials which can be helpful for mentoring.
+                    <h1>Your Username - ${newMentor.auth.username}</h1>
+                    <h1>Your Password - ${newMentor.auth.password}</h1>
+                    <br/>
+                    Please do not share password with anyone for making it secure.`,
+                    };
+                    var transporter = Nodemailer.createTransport({
+                         service: "gmail",
+                         auth: {
+                              user: "alterbuddy8@gmail.com",
+                              pass: "ngbtwrjshngkwxqo",
+                         },
+                    });
                     await new Wallet({
                          balance: 100,
                          currency: "in",
                          userId: newMentor._id,
                     }).save();
+                    transporter.sendMail(mailOptions, function (error, info) {
+                         if (error) {
+                              console.log(error);
+                         } else {
+                              console.log("Email sent: " + info.response);
+                         }
+                    });
                     const token = jwt.sign(
                          {
                               id: newMentor._id,
