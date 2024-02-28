@@ -18,6 +18,8 @@ io.on("connection", async (socket) => {
      socket.on("GET_CALL_REQUEST", async (data) => {
           const { mentorId, roomId, userId, token } = data;
           if (mentorId && roomId && userId && token) {
+               console.log("GOT MEET DATA", data);
+
                socket.join(data.roomId);
                socket.on("join", () => {
                     console.log("CLIENT JOINED TO ", socket.id);

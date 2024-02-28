@@ -28,7 +28,14 @@ export class FeaturesController implements IController {
      }
      public async GetTopMentors(req: Request, res: Response) {
           try {
-               const mentors = await TopMentor.find().sort({ createdAt: -1 }).populate("mentorId");
+               const mentors = await TopMentor.find()
+                    .sort({ createdAt: -1 })
+                    .populate({
+                         path: "mentorId",
+                         populate: {
+                              path: "category",
+                         },
+                    });
                return Ok(res, mentors);
           } catch (err) {
                return UnAuthorized(res, err);
@@ -51,7 +58,7 @@ export class FeaturesController implements IController {
           try {
                const id = req.params.id;
                const topMentor = await TopMentor.findOneAndDelete({ _id: id });
-               return Ok(res, `${topMentor.value._id} is deleted`);
+               return Ok(res, `mentor is removed from list`);
           } catch (err) {
                return UnAuthorized(res, err);
           }

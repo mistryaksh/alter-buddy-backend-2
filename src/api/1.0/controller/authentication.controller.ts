@@ -46,6 +46,12 @@ export class AuthenticationController implements IController {
                path: "/mentor/sign-up",
                middleware: [AuthForAdmin],
           });
+          this.routes.push({
+               handler: this.MentorSignOut,
+               method: "POST",
+               path: "/mentor/sign-out",
+               middleware: [AuthForAdmin],
+          });
      }
      public async UserSignIn(req: Request, res: Response) {
           try {
@@ -74,7 +80,7 @@ export class AuthenticationController implements IController {
                     { expiresIn: config.get("JWT_EXPIRE") }
                );
                await User.findByIdAndUpdate({ _id: user._id }, { $set: { online: true } });
-               return Ok(res, { token, user: `${user.mobile} is logged in` });
+               return Ok(res, { token, message: `${user.name.firstName} ${user.name.lastName} is logged in` });
           } catch (err) {
                return UnAuthorized(res, err);
           }
@@ -159,10 +165,10 @@ export class AuthenticationController implements IController {
                     var mailOptions: SendMailOptions = {
                          from: "alterbuddy8@gmail.com",
                          to: newMentor.contact.email,
-                         subject: "Sending Email using Node.js",
+                         subject: `${newMentor.name.firstName} Welcome to AlterBuddy! start your journey from here`,
                          html: `Hello ${name.firstName} ${name.lastName},
                     <br/>
-                    Your account on our mentor panel is registered successfully please mark your attention on this  mail this mail has your account credentials which can be helpful for mentoring.
+                    Your account for mentor is registered successfully please mark your attention on this  mail this mail has your account credentials which can be helpful for mentoring.
                     <h1>Your Username - ${newMentor.auth.username}</h1>
                     <h1>Your Password - ${newMentor.auth.password}</h1>
                     <br/>
@@ -275,6 +281,17 @@ export class AuthenticationController implements IController {
                     await User.findByIdAndUpdate({ _id: user._id }, { $set: { online: true } });
                     return Ok(res, { token, user: `${user.mobile} is logged in` });
                }
+          } catch (err) {
+               return UnAuthorized(res, err);
+          }
+     }
+     public async MentorSignOut(req: Request, res: Response) {
+          try {
+               const token = getTokenFromHeader(req);
+               res.removeHeader("authorization");
+               const verified = verifyToken(token);
+               const user = await User.findByIdAndUpdate({ _id: verified.id }, { $set: { online: false } });
+               return Ok(res, `logout successful`);
           } catch (err) {
                return UnAuthorized(res, err);
           }
