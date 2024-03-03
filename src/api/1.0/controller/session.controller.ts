@@ -69,7 +69,8 @@ export class SessionController implements IController {
                     .populate({
                          path: "users.mentor",
                          model: "Mentor",
-                    });
+                    })
+                    .sort({ createdAt: -1 });
 
                return Ok(res, chat);
           } catch (err) {

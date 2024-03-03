@@ -15,8 +15,12 @@ const io = new Server(server, {
 });
 
 io.on("connection", async (socket) => {
+     socket.on("connected", () => {
+          console.log("connected to server");
+     });
      socket.on("GET_CALL_REQUEST", async (data) => {
           const { mentorId, roomId, userId, token } = data;
+
           if (mentorId && roomId && userId && token) {
                console.log("GOT MEET DATA", data);
 
