@@ -132,7 +132,6 @@ export class MentorCallSchedule implements IController {
                     `Hey! ${user.name.firstName} ${user.name.lastName} your slot is booked with ${mentor.name.firstName} ${mentor.name.lastName}`
                );
           } catch (err) {
-               console.log(err);
                return UnAuthorized(res, err);
           }
      }

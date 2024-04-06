@@ -50,7 +50,7 @@ export class AuthenticationController implements IController {
                handler: this.MentorSignOut,
                method: "POST",
                path: "/mentor/sign-out",
-               middleware: [AuthForAdmin],
+               middleware: [AuthForMentor],
           });
      }
      public async UserSignIn(req: Request, res: Response) {
@@ -203,7 +203,6 @@ export class AuthenticationController implements IController {
                     return Ok(res, `${newMentor.name.firstName} is signed up successfully`);
                }
           } catch (err) {
-               console.log(err);
                return UnAuthorized(res, err);
           }
      }
@@ -290,7 +289,7 @@ export class AuthenticationController implements IController {
                const token = getTokenFromHeader(req);
                res.removeHeader("authorization");
                const verified = verifyToken(token);
-               const user = await User.findByIdAndUpdate({ _id: verified.id }, { $set: { online: false } });
+               await User.findByIdAndUpdate({ _id: verified.id }, { $set: { online: false } });
                return Ok(res, `logout successful`);
           } catch (err) {
                return UnAuthorized(res, err);

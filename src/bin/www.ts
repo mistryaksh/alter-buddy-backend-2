@@ -15,19 +15,12 @@ const io = new Server(server, {
 });
 
 io.on("connection", async (socket) => {
-     socket.on("connected", () => {
-          console.log("connected to server");
-     });
+     socket.on("connected", () => {});
      socket.on("GET_CALL_REQUEST", async (data) => {
           const { mentorId, roomId, userId, token } = data;
 
           if (mentorId && roomId && userId && token) {
-               console.log("GOT MEET DATA", data);
-
                socket.join(data.roomId);
-               socket.on("join", () => {
-                    console.log("CLIENT JOINED TO ", socket.id);
-               });
                if (token) {
                     const chat = await new Chat({
                          sessionDetails: {
@@ -40,7 +33,6 @@ io.on("connection", async (socket) => {
                          },
                     }).save();
                } else {
-                    console.log("TOKEN NOT FOUND");
                }
                const mentor = await Mentor.findOne({ _id: mentorId });
                const user = await User.findOne({ _id: userId });
@@ -73,7 +65,6 @@ io.on("connection", async (socket) => {
                     },
                }
           );
-          console.log("NEW UPDATED DATA OF ROOM", chat);
      });
 });
 

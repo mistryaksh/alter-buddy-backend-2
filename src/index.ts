@@ -7,6 +7,7 @@ import { errorHandler, notFoundMiddleware } from "./middleware";
 import { registerRoutesV1 } from "api";
 import cookieParser from "cookie-parser";
 import config from "config";
+import { createClient } from "redis";
 
 class App {
      express: Express;
@@ -31,6 +32,7 @@ class App {
           this.express.use(cookieParser());
           this.express.use(morgan("dev"));
           this.express.use(cors({ origin: "*" }));
+          // this.express.use(createClient({}));
      }
 
      private useErrorHandler() {
@@ -52,6 +54,10 @@ class App {
           } catch (err) {
                return console.log(err);
           }
+     }
+
+     private async redisClient() {
+          return createClient();
      }
 }
 

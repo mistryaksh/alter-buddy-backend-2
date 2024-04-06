@@ -54,7 +54,6 @@ export class BlogController implements IController {
      public async UploadBlog(req: Request, res: Response) {
           try {
                const { body, label, subLabel } = req.body;
-               console.log(body, label, subLabel);
                if (!body || !label || !subLabel) {
                     return UnAuthorized(res, "missing fields");
                } else {

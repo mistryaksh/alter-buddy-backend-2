@@ -63,7 +63,6 @@ export class VideoCallController implements IController {
                     token,
                });
           } catch (err) {
-               console.log("ERROR", err);
                return UnAuthorized(res, err);
           }
      }
@@ -77,10 +76,8 @@ export class VideoCallController implements IController {
                return Ok(res, await videoSdkService.data);
           } catch (err) {
                if (err.response) {
-                    console.log("AXIOS ERROR", err.response.data.message);
                     return UnAuthorized(res, err.response.data.message);
                }
-               console.log("NORMAL ERROR", err);
                return UnAuthorized(res, err);
           }
      }
