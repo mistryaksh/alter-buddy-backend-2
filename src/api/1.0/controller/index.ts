@@ -10,3 +10,5 @@ export * from "./video-call.controller";
 export * from "./session.controller";
 export * from "./mentor-call.controller";
 export * from "./website.controller";
+export * from "./post.controller";
+export * from "./wallet.controller";

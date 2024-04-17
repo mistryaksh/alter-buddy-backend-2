@@ -14,6 +14,12 @@ export class AccountController implements IController {
                middleware: [AuthForUser],
           });
           this.routes.push({
+               handler: this.UpdateUserProfile,
+               method: "PUT",
+               path: "/user/profile",
+               middleware: [AuthForUser],
+          });
+          this.routes.push({
                handler: this.GetUserById,
                method: "GET",
                path: "/user/profile/:id",
@@ -95,6 +101,39 @@ export class AccountController implements IController {
                const verified = verifyToken(token);
                const admin = await User.findById({ _id: verified.id });
                return Ok(res, admin);
+          } catch (err) {
+               return UnAuthorized(res, err);
+          }
+     }
+
+     public async UpdateUserProfile(req: Request, res: Response) {
+          try {
+               const { lastName, firstName, mobile, email, referralCode } = req.body;
+               if (!lastName || !email || !firstName || !mobile) {
+                    return UnAuthorized(res, "missing details please fill up all the details first");
+               }
+               const findUser = await User.findOne({ email });
+               if (findUser) {
+                    const updatedUser = await User.findByIdAndUpdate(
+                         { _id: findUser._id },
+                         {
+                              $set: {
+                                   mobile,
+                                   name: {
+                                        firstName: firstName,
+                                        lastName: lastName,
+                                   },
+                                   referralCode,
+                              },
+                         },
+                         {
+                              returnDocument: "after",
+                         }
+                    );
+                    return Ok(res, `${updatedUser.name.firstName} your profile has been saved!`);
+               } else {
+                    return UnAuthorized(res, "you don't have an account please create one");
+               }
           } catch (err) {
                return UnAuthorized(res, err);
           }

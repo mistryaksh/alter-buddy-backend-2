@@ -12,6 +12,8 @@ import {
      SessionController,
      MentorCallSchedule,
      WebsiteController,
+     PostController,
+     WalletController,
 } from "./controller";
 import { IController } from "interface";
 
@@ -50,4 +52,6 @@ export const registerRoutesV1 = (express: Express) => {
      routesHandler(express, new VideoCallController());
      routesHandler(express, new MentorCallSchedule());
      routesHandler(express, new WebsiteController());
+     routesHandler(express, new PostController());
+     routesHandler(express, new WalletController());
 };

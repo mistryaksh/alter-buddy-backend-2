@@ -88,13 +88,13 @@ export class AuthenticationController implements IController {
 
      public async UserSignUp(req: Request, res: Response) {
           try {
-               const { email, mobile, name, password }: IUserProps = req.body;
+               const { email, password }: IUserProps = req.body;
 
-               if (!name.firstName || !name.lastName || !email || !mobile || !password) {
+               if (!email || !password) {
                     return UnAuthorized(res, "missing fields");
                }
 
-               const user = await User.findOne({ mobile });
+               const user = await User.findOne({ email });
 
                if (user) {
                     return UnAuthorized(res, "user is already registered");
@@ -105,8 +105,6 @@ export class AuthenticationController implements IController {
                     acType: "USER",
                     block: false,
                     email,
-                    mobile,
-                    name,
                     online: false,
                     password: hashed,
                     verified: false,
