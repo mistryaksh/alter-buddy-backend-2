@@ -49,8 +49,8 @@ class App {
 
      private async connectDb() {
           try {
-               await mongoose.connect(config.get("DB_PATH"), {});
-               console.log("connected to database");
+               const database = await mongoose.connect(config.get("DB_PATH"), {});
+               console.log("connected to database", database.connection.db.databaseName);
           } catch (err) {
                return console.log(err);
           }

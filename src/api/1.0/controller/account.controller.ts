@@ -108,8 +108,8 @@ export class AccountController implements IController {
 
      public async UpdateUserProfile(req: Request, res: Response) {
           try {
-               const { lastName, firstName, mobile, email, referralCode } = req.body;
-               if (!lastName || !email || !firstName || !mobile) {
+               const { lastName, firstName, mobile, email, referralCode, myInitialCategories, dob } = req.body;
+               if (!lastName || !email || !firstName || !mobile || !myInitialCategories || !dob) {
                     return UnAuthorized(res, "missing details please fill up all the details first");
                }
                const findUser = await User.findOne({ email });
@@ -124,6 +124,8 @@ export class AccountController implements IController {
                                         lastName: lastName,
                                    },
                                    referralCode,
+                                   myInitialCategories,
+                                   dob,
                               },
                          },
                          {
