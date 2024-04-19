@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema<IUserProps>(
           online: { type: mongoose.Schema.Types.Boolean, default: false },
           referralCode: { type: mongoose.Schema.Types.String },
           myInitialCategories: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubCategory" }],
-          dob: { type: mongoose.Schema.Types.String, required: true },
+          dob: { type: mongoose.Schema.Types.String },
      },
      {
           timestamps: true,
