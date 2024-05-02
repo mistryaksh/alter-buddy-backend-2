@@ -133,72 +133,85 @@ export class AuthenticationController implements IController {
 
      public async MentorSignUp(req: Request, res: Response) {
           try {
-               const { auth, category, contact, name, subCategory, specialists }: IMentorProps = req.body;
+               const {
+                 auth,
+                 category,
+                 contact,
+                 name,
+                 subCategory,
+                 specialists,
+                 videoLink,
+                 description,
+               }: IMentorProps = req.body;
                if (
-                    !auth.password ||
-                    !auth.username ||
-                    !category ||
-                    !contact.address ||
-                    !contact.email ||
-                    !contact.email ||
-                    !name.firstName ||
-                    !name.lastName ||
-                    subCategory.length === 0 ||
-                    !specialists
+                 !auth.password ||
+                 !auth.username ||
+                 !category ||
+                 !contact.address ||
+                 !contact.email ||
+                 !contact.email ||
+                 !name.firstName ||
+                 !name.lastName ||
+                 subCategory.length === 0 ||
+                 !specialists ||
+                 !videoLink ||
+                 !description
                ) {
-                    return UnAuthorized(res, "missing fields");
+                 return UnAuthorized(res, "missing fields");
                } else {
-                    const mentor = await Mentor.findOne({ "auth.username": auth.username });
-                    if (mentor) {
-                         return UnAuthorized(res, "mentor is already registered");
-                    }
+                 const mentor = await Mentor.findOne({
+                   "auth.username": auth.username,
+                 });
+                 if (mentor) {
+                   return UnAuthorized(res, "mentor is already registered");
+                 }
 
-                    const newMentor = await new Mentor({
-                         auth: {
-                              password: bcrypt.hashSync(auth.password, 10),
-                         },
-                         ...req.body,
-                    }).save();
+                 const newMentor = await new Mentor({
+                   auth: {
+                     password: bcrypt.hashSync(auth.password, 10),
+                   },
+                   videoLink:
+                     "https://youtu.be/samaSr6cmLU?si=j0c7p5n6E8HCushK",
+                   ...req.body,
+                 }).save();
 
-                    var mailOptions: SendMailOptions = {
-                         from: "alterbuddy8@gmail.com",
-                         to: newMentor.contact.email,
-                         subject: `${newMentor.name.firstName} Welcome to AlterBuddy! start your journey from here`,
-                         html: `Hello ${name.firstName} ${name.lastName},
+                 var mailOptions: SendMailOptions = {
+                   from: "alterbuddy8@gmail.com",
+                   to: newMentor.contact.email,
+                   subject: `${newMentor.name.firstName} Welcome to AlterBuddy! start your journey from here`,
+                   html: `Hello ${name.firstName} ${name.lastName},
                     <br/>
                     Your account for mentor is registered successfully please mark your attention on this  mail this mail has your account credentials which can be helpful for mentoring.
                     <h1>Your Username - ${newMentor.auth.username}</h1>
                     <h1>Your Password - ${newMentor.auth.password}</h1>
                     <br/>
                     Please do not share password with anyone for making it secure.`,
-                    };
-                    var transporter = Nodemailer.createTransport({
-                         service: "gmail",
-                         auth: {
-                              user: "alterbuddy8@gmail.com",
-                              pass: "ngbtwrjshngkwxqo",
-                         },
-                    });
-                    await new Wallet({
-                         balance: 100,
-                         currency: "in",
-                         userId: newMentor._id,
-                    }).save();
-                    transporter.sendMail(mailOptions, function (error, info) {
-                         if (error) {
-                              console.log(error);
-                         } else {
-                              console.log("Email sent: " + info.response);
-                         }
-                    });
-                    const token = jwt.sign(
-                         {
-                              id: newMentor._id,
-                         },
-                         config.get("JWT_SECRET"),
-                         { expiresIn: config.get("JWT_EXPIRE") }
-                    );
-                    return Ok(res, `${newMentor.name.firstName} is signed up successfully`);
+                 };
+                 var transporter = Nodemailer.createTransport({
+                   service: "gmail",
+                   auth: {
+                     user: "alterbuddy8@gmail.com",
+                     pass: "ngbtwrjshngkwxqo",
+                   },
+                 });
+                 transporter.sendMail(mailOptions, function (error, info) {
+                   if (error) {
+                     console.log(error);
+                   } else {
+                     console.log("Email sent: " + info.response);
+                   }
+                 });
+                 const token = jwt.sign(
+                   {
+                     id: newMentor._id,
+                   },
+                   config.get("JWT_SECRET"),
+                   { expiresIn: config.get("JWT_EXPIRE") }
+                 );
+                 return Ok(
+                   res,
+                   `${newMentor.name.firstName} is signed up successfully`
+                 );
                }
           } catch (err) {
                return UnAuthorized(res, err);

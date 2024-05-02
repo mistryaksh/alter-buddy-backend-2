@@ -23,14 +23,17 @@ interface IMentorAccountStatus {
 }
 
 export interface IMentorProps {
-     name: IMentorNameProps;
-     contact: IMentorContactProps;
-     auth: IMentorAuthProps;
-     category: mongoose.Schema.Types.ObjectId;
-     specialists: string[];
-     accountStatus: IMentorAccountStatus;
-     acType: "MENTOR";
-     subCategory: mongoose.Schema.Types.ObjectId[];
+  name: IMentorNameProps;
+  contact: IMentorContactProps;
+  auth: IMentorAuthProps;
+  category: mongoose.Schema.Types.ObjectId;
+  specialists: string[];
+  accountStatus: IMentorAccountStatus;
+  acType: "MENTOR";
+  subCategory: mongoose.Schema.Types.ObjectId[];
+  inCall?: boolean;
+  videoLink?: string;
+  description?: string;
 }
 
 export interface ICategoryProps {

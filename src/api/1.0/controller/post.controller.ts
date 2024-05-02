@@ -41,14 +41,13 @@ export class PostController implements IController {
 
      public async GetMyUploadedPost(req: Request, res: Response) {
           try {
-               const token = getTokenFromHeader(req);
-               const verified = verifyToken(token);
-               const user = await User.findById({ _id: verified.id });
-               const posts = await Post.find({ userId: user._id });
-               return Ok(res, posts);
+            const token = getTokenFromHeader(req);
+            const verified = verifyToken(token);
+            const user = await User.findById({ _id: verified.id });
+            const posts = await Post.find({ userId: user._id });
+            return Ok(res, posts);
           } catch (err) {
-               console.log(err);
-               return UnAuthorized(res, err);
+            return UnAuthorized(res, err);
           }
      }
      public async GetAllPosts(req: Request, res: Response) {
@@ -74,23 +73,22 @@ export class PostController implements IController {
 
      public async CreateNewPost(req: Request, res: Response) {
           try {
-               const { body, title, subTitle }: IPostProps = req.body;
-               if (!body || !title) {
-                    return UnAuthorized(res, `missing fields`);
-               }
-               const userToken = getTokenFromHeader(req);
-               const verifyTokens = verifyToken(userToken) as any;
-               const user = await User.findById({ _id: verifyTokens.id });
-               const newPost = await new Post({
-                    title,
-                    body,
-                    userId: user._id,
-                    subTitle,
-               }).save();
-               return Ok(res, `finishing up for post ${newPost.title}`);
+            const { body, title, subTitle }: IPostProps = req.body;
+            if (!body || !title) {
+              return UnAuthorized(res, `missing fields`);
+            }
+            const userToken = getTokenFromHeader(req);
+            const verifyTokens = verifyToken(userToken) as any;
+            const user = await User.findById({ _id: verifyTokens.id });
+            const newPost = await new Post({
+              title,
+              body,
+              userId: user._id,
+              subTitle,
+            }).save();
+            return Ok(res, `finishing up for post ${newPost.title}`);
           } catch (err) {
-               console.log(err);
-               return UnAuthorized(res, err);
+            return UnAuthorized(res, err);
           }
      }
 
