@@ -102,7 +102,7 @@ export class AuthenticationController implements IController {
     try {
       const { email, password, name, mobile }: IUserProps = req.body;
 
-      if (!email || !password) {
+      if (!email || !password || !mobile || !password) {
         return UnAuthorized(res, "missing fields");
       }
 
