@@ -1,84 +1,61 @@
 import { Request, Response } from "express";
-import { IRouter } from "express";
 import { IController, IControllerRoutes } from "interface";
 import { BadRequest, Ok, UnAuthorized } from "utils";
-import jwt from "jsonwebtoken";
-import { VideoSdkService } from "services/video-sdk.service";
-import config from "config";
+import { VideoCallService } from "services/100ms.services";
+import { AuthForUser } from "middleware";
+import { Chat } from "model";
 
 export class VideoCallController implements IController {
-     public routes: IControllerRoutes[] = [];
-     constructor() {
-          this.routes.push({
-               handler: this.GenerateVideoCallToken,
-               method: "GET",
-               path: "/video-call-token",
-          });
-          this.routes.push({
-               handler: this.CreateMeeting,
-               method: "GET",
-               path: "/create-meeting",
-          });
-          this.routes.push({
-               handler: this.ValidateRoomId,
-               method: "POST",
-               path: "/validate-room",
-          });
-     }
+  public routes: IControllerRoutes[] = [];
 
-     public async GenerateVideoCallToken(req: Request, res: Response) {
-          try {
-               const payload = {
-                    apikey: config.get("REACT_APP_VIDEO_SDK_KEY"),
-                    permissions: [`allow_join`], // `ask_join` || `allow_mod`
-               };
+  constructor() {
+    this.routes.push({
+      handler: this.SetUpMeeting,
+      method: "POST",
+      path: "/start-meeting",
+      middleware: [AuthForUser],
+    });
+    this.routes.push({
+      handler: this.GetSessionByRoomCode,
+      method: "GET",
+      path: "/get-session/:roomCode",
+    });
+  }
 
-               const token = jwt.sign(payload, config.get("REACT_APP_VIDEO_SDK_SECRET"), {
-                    expiresIn: "120m",
-                    algorithm: "HS256",
-               });
-               return Ok(res, token);
-          } catch (err) {
-               return UnAuthorized(res, err);
-          }
-     }
-     public async CreateMeeting(req: Request, res: Response) {
-          try {
-               const payload = {
-                    apikey: config.get("REACT_APP_VIDEO_SDK_KEY"),
-                    permissions: [`allow_join`], // `ask_join` || `allow_mod`
-               };
+  public async SetUpMeeting(req: Request, res: Response) {
+    try {
+      const room = await VideoCallService.Create100MSRoom({
+        roomDesc: "some description",
+        roomName: `test-room`,
+      });
+      if (room) {
+        const roomCode = await VideoCallService.Create100MSRoomCode({
+          roomId: room.id,
+        });
+        return Ok(res, {
+          room: room,
+          mentorCode: roomCode.find((prop) => prop.role === "mentor"),
+          userCode: roomCode.find((prop) => prop.role === "host"),
+        });
+      } else {
+        return BadRequest(res, "generating meeting is failed!");
+      }
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  }
 
-               const token = jwt.sign(payload, config.get("REACT_APP_VIDEO_SDK_SECRET"), {
-                    expiresIn: "120m",
-                    algorithm: "HS256",
-               });
-
-               if (!token) {
-                    return Ok(res, "token is not provided");
-               }
-               const videoSdkService = await VideoSdkService.CreateMeeting(token);
-               return Ok(res, {
-                    meetingId: videoSdkService.data.roomId,
-                    token,
-               });
-          } catch (err) {
-               return UnAuthorized(res, err);
-          }
-     }
-     public async ValidateRoomId(req: Request, res: Response) {
-          try {
-               const { roomId, token } = req.body;
-               if (!roomId || !token) {
-                    return BadRequest(res, "failed to validate! not room id or token is provided");
-               }
-               const videoSdkService = await VideoSdkService.ValidateRoom({ roomId, token });
-               return Ok(res, await videoSdkService.data);
-          } catch (err) {
-               if (err.response) {
-                    return UnAuthorized(res, err.response.data.message);
-               }
-               return UnAuthorized(res, err);
-          }
-     }
+  public async GetSessionByRoomCode(req: Request, res: Response) {
+    try {
+      const session = await Chat.findOne({
+        "sessionDetails.roomCode.mentor": req.params.roomCode,
+      })
+        .populate("users.user")
+        .populate("users.mentor");
+      console.log(session);
+      return Ok(res, session);
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  }
 }

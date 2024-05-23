@@ -14,6 +14,7 @@ import {
      WebsiteController,
      PostController,
      WalletController,
+     NotificationController,
 } from "./controller";
 import { IController } from "interface";
 
@@ -54,4 +55,5 @@ export const registerRoutesV1 = (express: Express) => {
      routesHandler(express, new WebsiteController());
      routesHandler(express, new PostController());
      routesHandler(express, new WalletController());
+     routesHandler(express, new NotificationController());
 };

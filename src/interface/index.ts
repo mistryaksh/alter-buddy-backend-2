@@ -7,3 +7,4 @@ export * from "./top-mentor.interface";
 export * from "./faq.interface";
 export * from "./mentor-call-schedule.interface";
 export * from "./post.interface";
+export * from "./notification.interface";

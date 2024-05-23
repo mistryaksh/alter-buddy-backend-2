@@ -40,6 +40,7 @@
           "start": "nodemon --watch 'src/**/*' -e ts --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/bin/www.ts"
      },
      "dependencies": {
+          "@100mslive/server-sdk": "^0.3.0",
           "@types/method-override": "^0.0.35",
           "@types/uuid": "^9.0.4",
           "axios": "^1.6.2",

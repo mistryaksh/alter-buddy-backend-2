@@ -1,25 +1,25 @@
 import mongoose from "mongoose";
 
 interface IMentorNameProps {
-     firstName: string;
-     lastName: string;
+  firstName: string;
+  lastName: string;
 }
 
 interface IMentorContactProps {
-     email: string;
-     mobile: string;
-     address: string;
+  email: string;
+  mobile: string;
+  address: string;
 }
 
 export interface IMentorAuthProps {
-     username: string;
-     password: string;
+  username: string;
+  password: string;
 }
 
 interface IMentorAccountStatus {
-     verification: boolean;
-     block: boolean;
-     online: boolean;
+  verification: boolean;
+  block: boolean;
+  online: boolean;
 }
 
 export interface IMentorProps {
@@ -37,17 +37,16 @@ export interface IMentorProps {
 }
 
 export interface ICategoryProps {
-     title: string;
-
-     status: boolean;
+  title: string;
+  status: boolean;
 }
 
 export interface ISubCategoryProps {
-     label: string;
-     categoryId: mongoose.Schema.Types.ObjectId;
-     subTitle: string;
-     desc: string;
-     symptoms: string[];
-     causes: string[];
-     treatment: string[];
+  label: string;
+  categoryId: mongoose.Schema.Types.ObjectId;
+  subTitle: string;
+  desc: string;
+  symptoms: string[];
+  causes: string[];
+  treatment: string[];
 }
