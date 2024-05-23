@@ -18,6 +18,7 @@ const io = new Server(server, {
 var mentor: string | null = null;
 io.on("connection", (socket) => {
   socket.on("GET_CALL_REQUEST", async (data) => {
+    console.log("RECEIVED CALL REQUEST", data);
     const session = await new Chat({
       message: [],
       users: {
@@ -30,6 +31,7 @@ io.on("connection", (socket) => {
           host: data.userRoomCode.code,
           mentor: data.mentorRoomCode.code,
         },
+        callType: data.callType ? "audio" : "video",
         roomId: data.room.id,
         roomName: data.room.name,
       },
@@ -59,17 +61,17 @@ io.on("connection", (socket) => {
     );
   });
 
-  socket.on('DECLINE_CALL', async (data) => {
-    console.log('CALL DECLINED')
-     const chat = await Chat.findOneAndUpdate({
-       "sessionDetails.roomCode.mentor": data,
-       status: "REJECTED",
-     });
-     await Notification.findOneAndUpdate(
-       { notificationTo: chat.users.mentor },
-       { $set: { markAsRead: true } }
-     );
-  })
+  socket.on("DECLINE_CALL", async (data) => {
+    console.log("CALL DECLINED");
+    const chat = await Chat.findOneAndUpdate({
+      "sessionDetails.roomCode.mentor": data,
+      status: "REJECTED",
+    });
+    await Notification.findOneAndUpdate(
+      { notificationTo: chat.users.mentor },
+      { $set: { markAsRead: true } }
+    );
+  });
   socket.on("disconnect", () => {
     console.log("CLIENT DISCONNECTED");
   });

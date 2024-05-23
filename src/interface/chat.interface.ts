@@ -13,6 +13,8 @@ export interface IChatProps {
     };
     roomName: string;
     description: string;
+    callType: callType;
+    duration: string;
   };
   message: [
     {
@@ -24,11 +26,12 @@ export interface IChatProps {
       topic: mongoose.Schema.Types.String;
     }
   ];
-  status?: callType;
+  status?: callStatus;
 }
-export type callType =
+export type callStatus =
   | "REJECTED"
   | "ONGOING"
   | "COMPLETED"
   | "PENDING"
   | "ACCEPTED";
+export type callType = "video" | "audio" | "chat";

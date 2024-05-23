@@ -14,6 +14,12 @@ const ChatSchema = new mongoose.Schema<IChatProps>(
         mentor: { type: mongoose.Schema.Types.String, required: true },
       },
       roomName: { type: mongoose.Schema.Types.String, required: true },
+      callType: {
+        type: mongoose.Schema.Types.String,
+        required: true,
+        default: "audio",
+      },
+      duration: { type: mongoose.Schema.Types.String },
     },
     message: [
       {

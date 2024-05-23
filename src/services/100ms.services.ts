@@ -1,5 +1,6 @@
 import config from "config";
 import { SDK } from "@100mslive/server-sdk";
+import { callType } from "interface/chat.interface";
 
 class VideoCallServices {
   sdk: SDK = new SDK(
@@ -10,14 +11,19 @@ class VideoCallServices {
   public async Create100MSRoom({
     roomName,
     roomDesc,
+    isAudioCall,
   }: {
     roomName: string;
     roomDesc: string;
+    isAudioCall: callType;
   }) {
     const room = await this.sdk.rooms.create({
       name: roomName,
       description: roomDesc,
-      template_id: config.get("REACT_APP_100MD_SDK_TEMPLATE"),
+      template_id:
+        isAudioCall === "audio"
+          ? config.get<string>("REACT_APP_100MD_SDK_AUDIO_TEMPLATE")
+          : config.get<string>("REACT_APP_100MD_SDK_VIDEO_TEMPLATE"),
       region: "in",
       recording_info: { enabled: true },
     });

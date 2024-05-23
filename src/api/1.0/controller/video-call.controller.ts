@@ -4,6 +4,7 @@ import { BadRequest, Ok, UnAuthorized } from "utils";
 import { VideoCallService } from "services/100ms.services";
 import { AuthForUser } from "middleware";
 import { Chat } from "model";
+import { callType } from "interface/chat.interface";
 
 export class VideoCallController implements IController {
   public routes: IControllerRoutes[] = [];
@@ -24,9 +25,14 @@ export class VideoCallController implements IController {
 
   public async SetUpMeeting(req: Request, res: Response) {
     try {
+      const { audioCall }: { audioCall: callType } = req.body;
+      if (!audioCall) {
+        return UnAuthorized(res, "define audio or video call");
+      }
       const room = await VideoCallService.Create100MSRoom({
         roomDesc: "some description",
         roomName: `test-room`,
+        isAudioCall: audioCall,
       });
       if (room) {
         const roomCode = await VideoCallService.Create100MSRoomCode({
