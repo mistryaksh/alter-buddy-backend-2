@@ -12,4 +12,5 @@ export * from "./mentor-call.controller";
 export * from "./website.controller";
 export * from "./post.controller";
 export * from "./wallet.controller";
-export * from './notification.controller'
+export * from "./notification.controller";
+export * from "./chat.controller";

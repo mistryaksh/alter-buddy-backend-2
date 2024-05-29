@@ -72,6 +72,22 @@ io.on("connection", (socket) => {
       { $set: { markAsRead: true } }
     );
   });
+  socket.on(
+    "CHAT_DATA_TO_MENTOR",
+    ({
+      mentorId,
+      roomId,
+      userId,
+    }: {
+      mentorId: string;
+      roomId: string;
+      userId: string;
+    }) => {
+      if (mentorId?.length && roomId?.length && userId?.length) {
+        io.emit("GET_MENTORS_CHAT_DATA", { mentorId, roomId, userId });
+      }
+    }
+  );
   socket.on("disconnect", () => {
     console.log("CLIENT DISCONNECTED");
   });
