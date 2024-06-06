@@ -1,79 +1,97 @@
 import { Request, Response } from "express";
 import { NextFunction } from "express";
 import { Mentor, User } from "model";
-import { BadRequest, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
+import {
+  BadRequest,
+  UnAuthorized,
+  getTokenFromHeader,
+  verifyToken,
+} from "utils";
 
-export const AuthForUser = async (req: Request, res: Response, next: NextFunction) => {
-     try {
-          const token = getTokenFromHeader(req);
-          if (!token) {
-               return BadRequest(res, "please login");
-          }
+export const AuthForUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = getTokenFromHeader(req);
+    if (!token) {
+      return BadRequest(res, "please login");
+    }
 
-          const verified = verifyToken(token);
+    const verified = verifyToken(token);
 
-          const user = await User.findOne({ _id: verified.id });
+    const user = await User.findOne({ _id: verified.id });
 
-          if (user.acType !== "USER") {
-               return UnAuthorized(res, "access_denied");
-          }
+    if (user.acType !== "USER") {
+      return UnAuthorized(res, "access_denied");
+    }
 
-          if (!verified.id) {
-               return BadRequest(res, "failed to verify token");
-          }
+    if (!verified.id) {
+      return BadRequest(res, "failed to verify token");
+    }
 
-          next();
-     } catch (err) {
-          return UnAuthorized(res, err);
-     }
+    next();
+  } catch (err) {
+    return UnAuthorized(res, err);
+  }
 };
 
-export const AuthForMentor = async (req: Request, res: Response, next: NextFunction) => {
-     try {
-          const token = getTokenFromHeader(req);
-          if (!token) {
-               return BadRequest(res, "please login");
-          }
+export const AuthForMentor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = getTokenFromHeader(req);
+    if (!token) {
+      return BadRequest(res, "please login");
+    }
 
-          const verified = verifyToken(token);
+    const verified = verifyToken(token);
 
-          const mentor = await Mentor.findOne({ _id: verified.id });
+    const mentor = await Mentor.findOne({ _id: verified.id });
 
-          if (mentor.acType !== "MENTOR") {
-               return UnAuthorized(res, "access_denied");
-          }
+    if (mentor.acType !== "MENTOR") {
+      return UnAuthorized(res, "access_denied");
+    }
 
-          if (!verified.id) {
-               return BadRequest(res, "failed to verify token");
-          }
+    if (!verified.id) {
+      return BadRequest(res, "failed to verify token");
+    }
 
-          next();
-     } catch (err) {
-          return UnAuthorized(res, err);
-     }
+    next();
+  } catch (err) {
+    return UnAuthorized(res, err);
+  }
 };
 
-export const AuthForAdmin = async (req: Request, res: Response, next: NextFunction) => {
-     try {
-          const token = getTokenFromHeader(req);
-          if (!token) {
-               return BadRequest(res, "please login");
-          }
+export const AuthForAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = getTokenFromHeader(req);
+    if (!token) {
+      return BadRequest(res, "please login");
+    }
+    console.log("TOKEN", token);
 
-          const verified = verifyToken(token);
+    const verified = verifyToken(token);
+    console.log("VERIFICATION", verified);
+    const user = await User.findOne({ _id: verified.id });
+    console.log("USER", user);
+    if (user.acType !== "ADMIN") {
+      return UnAuthorized(res, "access_denied");
+    }
 
-          const user = await User.findOne({ _id: verified.id });
+    if (!verified.id) {
+      return BadRequest(res, "failed to verify token");
+    }
 
-          if (user.acType !== "ADMIN") {
-               return UnAuthorized(res, "access_denied");
-          }
-
-          if (!verified.id) {
-               return BadRequest(res, "failed to verify token");
-          }
-
-          next();
-     } catch (err) {
-          return UnAuthorized(res, err);
-     }
+    next();
+  } catch (err) {
+    return UnAuthorized(res, err);
+  }
 };

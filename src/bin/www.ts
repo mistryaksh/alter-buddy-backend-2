@@ -18,42 +18,60 @@ const io = new Server(server, {
 var mentor: string | null = null;
 io.on("connection", (socket) => {
   socket.on("GET_CALL_REQUEST", async (data) => {
-    console.log("RECEIVED CALL REQUEST", data);
-    const session = await new Chat({
-      message: [],
-      users: {
-        user: data.userId,
-        mentor: data.mentorId,
-      },
-      sessionDetails: {
-        description: data.room.description,
-        roomCode: {
-          host: data.userRoomCode.code,
-          mentor: data.mentorRoomCode.code,
+    const findChat = await Chat.findOne({
+      "sessionDetails.roomId": data.room.id,
+    });
+
+    if (!findChat) {
+      const session = await new Chat({
+        message: [],
+        users: {
+          user: data.userId,
+          mentor: data.mentorId,
         },
-        callType: data.callType ? "audio" : "video",
-        roomId: data.room.id,
-        roomName: data.room.name,
-      },
-      status: "PENDING",
-    }).save();
-    await new Notification({
-      notificationTo: session.users.mentor,
-      notificationBy: session.users.user,
-      content: session.sessionDetails.description
-        ? session.sessionDetails.description
-        : "N/A",
-      label: session.sessionDetails.roomName,
-      notificationFor: "mentor",
-      markAsRead: false,
-    }).save();
-    io.emit("THROW_CALL_REQUEST", session);
+        sessionDetails: {
+          description: data.room.description,
+          roomCode: {
+            host: data.userRoomCode.code,
+            mentor: data.mentorRoomCode.code,
+          },
+          callType: data.callType,
+          roomId: data.room.id,
+          roomName: data.room.name,
+          duration: 0,
+        },
+        status: "PENDING",
+      }).save();
+      await new Notification({
+        notificationTo: session.users.mentor,
+        notificationBy: session.users.user,
+        content: session.sessionDetails.description
+          ? session.sessionDetails.description
+          : "N/A",
+        label: session.sessionDetails.roomName,
+        notificationFor: "mentor",
+        markAsRead: false,
+      }).save();
+      await new Notification({
+        notificationTo: session.users.user,
+        notificationBy: session.users.mentor,
+        content: session.sessionDetails.description
+          ? session.sessionDetails.description
+          : "N/A",
+        label: session.sessionDetails.roomName,
+        notificationFor: "user",
+        markAsRead: false,
+      }).save();
+      io.emit("THROW_CALL_REQUEST", session);
+    } else {
+      io.emit("THROW_CALL_REQUEST", findChat);
+    }
   });
 
   socket.on("ACCEPT_CALL", async (data) => {
     const chat = await Chat.findOneAndUpdate({
       "sessionDetails.roomCode.mentor": data,
-      status: "COMPLETED",
+      status: "ONGOING",
     });
     await Notification.findOneAndUpdate(
       { notificationTo: chat.users.mentor },
@@ -62,7 +80,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("DECLINE_CALL", async (data) => {
-    console.log("CALL DECLINED");
     const chat = await Chat.findOneAndUpdate({
       "sessionDetails.roomCode.mentor": data,
       status: "REJECTED",
@@ -73,8 +90,25 @@ io.on("connection", (socket) => {
     );
   });
   socket.on(
+    "FINISH_CALL",
+    async ({ duration, roomId }: { roomId: string; duration: string }) => {
+      const room = await Chat.findOne({ "sessionDetails.roomId": roomId });
+      await Chat.findOneAndUpdate(
+        {
+          "sessionDetails.roomId": roomId,
+        },
+        {
+          $set: {
+            status: "COMPLETED",
+            "sessionDetails.duration": duration,
+          },
+        }
+      );
+    }
+  );
+  socket.on(
     "CHAT_DATA_TO_MENTOR",
-    ({
+    async ({
       mentorId,
       roomId,
       userId,
@@ -83,6 +117,24 @@ io.on("connection", (socket) => {
       roomId: string;
       userId: string;
     }) => {
+      await new Chat({
+        users: {
+          mentor: mentorId,
+          user: userId,
+        },
+        sessionDetails: {
+          callType: "chat",
+          roomId: roomId,
+          roomCode: {
+            host: roomId,
+            mentor: roomId,
+          },
+          roomName: `${userId}-${mentorId}`,
+        },
+        message: [],
+        status: "ONGOING",
+      }).save();
+
       if (mentorId?.length && roomId?.length && userId?.length) {
         io.emit("GET_MENTORS_CHAT_DATA", { mentorId, roomId, userId });
       }

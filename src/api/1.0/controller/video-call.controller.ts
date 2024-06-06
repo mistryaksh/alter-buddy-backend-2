@@ -25,13 +25,14 @@ export class VideoCallController implements IController {
 
   public async SetUpMeeting(req: Request, res: Response) {
     try {
-      const { audioCall }: { audioCall: callType } = req.body;
+      const { audioCall, userIds }: { audioCall: callType; userIds: string } =
+        req.body;
       if (!audioCall) {
         return UnAuthorized(res, "define audio or video call");
       }
       const room = await VideoCallService.Create100MSRoom({
         roomDesc: "some description",
-        roomName: `test-room`,
+        roomName: userIds,
         isAudioCall: audioCall,
       });
       if (room) {
@@ -58,7 +59,6 @@ export class VideoCallController implements IController {
       })
         .populate("users.user")
         .populate("users.mentor");
-      console.log(session);
       return Ok(res, session);
     } catch (err) {
       return UnAuthorized(res, err);

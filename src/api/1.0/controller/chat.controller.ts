@@ -22,7 +22,6 @@ export class ChatController implements IController {
       const token = await ChatService.useAgoraToken(userId);
       return Ok(res, token);
     } catch (err) {
-      console.log(err);
       return UnAuthorized(res, err);
     }
   }

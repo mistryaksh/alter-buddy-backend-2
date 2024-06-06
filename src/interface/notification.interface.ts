@@ -5,7 +5,6 @@ export interface INotificationProps {
   subTitle?: string;
   content: string;
   notificationType: "offer" | "call";
-
   markAsRead: boolean;
   notificationFor: "user" | "mentor";
   notificationTo: mongoose.Schema.Types.ObjectId;
