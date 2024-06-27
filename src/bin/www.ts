@@ -3,6 +3,8 @@ import app from "../index";
 import { normalizePort } from "../utils";
 import { Server } from "socket.io";
 import { Chat, Notification } from "model";
+import { IChatProps } from "interface/chat.interface";
+import mongoose from "mongoose";
 
 const port = normalizePort(process.env.PORT || 8080);
 app.set("port", port);
@@ -140,6 +142,12 @@ io.on("connection", (socket) => {
       }
     }
   );
+  socket.on("CHAT_LEAVE", async ({ chatRoom }: { chatRoom: string }) => {
+    await Chat.findOneAndUpdate(
+      { "sessionDetails.roomId": chatRoom },
+      { $set: { status: "COMPLETED" } }
+    );
+  });
   socket.on("disconnect", () => {
     console.log("CLIENT DISCONNECTED");
   });
