@@ -16,6 +16,7 @@ import {
   WalletController,
   NotificationController,
   ChatController,
+  TeamController,
 } from "./controller";
 import { IController } from "interface";
 
@@ -58,4 +59,5 @@ export const registerRoutesV1 = (express: Express) => {
   routesHandler(express, new WalletController());
   routesHandler(express, new NotificationController());
   routesHandler(express, new ChatController());
+  routesHandler(express, new TeamController());
 };

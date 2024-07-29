@@ -14,3 +14,4 @@ export * from "./post.controller";
 export * from "./wallet.controller";
 export * from "./notification.controller";
 export * from "./chat.controller";
+export * from "./team.controller";
