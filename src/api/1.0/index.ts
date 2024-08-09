@@ -8,15 +8,13 @@ import {
   HomeController,
   MentorController,
   FaqController,
-  VideoCallController,
-  SessionController,
   MentorCallSchedule,
   WebsiteController,
   PostController,
   WalletController,
   NotificationController,
-  ChatController,
   TeamController,
+  RantController,
 } from "./controller";
 import { IController } from "interface";
 
@@ -51,13 +49,11 @@ export const registerRoutesV1 = (express: Express) => {
   routesHandler(express, new BlogController());
   routesHandler(express, new FeaturesController());
   routesHandler(express, new FaqController());
-  routesHandler(express, new SessionController());
-  routesHandler(express, new VideoCallController());
   routesHandler(express, new MentorCallSchedule());
   routesHandler(express, new WebsiteController());
   routesHandler(express, new PostController());
   routesHandler(express, new WalletController());
   routesHandler(express, new NotificationController());
-  routesHandler(express, new ChatController());
   routesHandler(express, new TeamController());
+  routesHandler(express, new RantController());
 };

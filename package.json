@@ -41,8 +41,10 @@
      },
      "dependencies": {
           "@100mslive/server-sdk": "^0.3.0",
+          "@types/ably": "^1.0.0",
           "@types/method-override": "^0.0.35",
           "@types/uuid": "^9.0.4",
+          "ably": "^2.3.1",
           "agora-access-token": "^2.0.4",
           "axios": "^1.6.2",
           "bcrypt": "^5.0.0",
@@ -64,6 +66,7 @@
           "pubnub": "^7.3.3",
           "redis": "^4.6.13",
           "socket.io": "^4.7.2",
+          "stream-chat": "^8.37.0",
           "stripe": "^14.1.0",
           "twilio": "^4.17.0",
           "uuid": "^9.0.1",
