@@ -5,19 +5,25 @@ import { getTokenFromHeader, Ok, UnAuthorized, verifyToken } from "utils";
 import config from "config";
 import Ably from "ably";
 import { User } from "model";
+import { StreamClient } from "@stream-io/node-sdk";
 
 export class RantController implements IController {
   public routes: IControllerRoutes[] = [];
 
   constructor() {
     this.routes.push({
-      handler: this.GetRantToken,
+      handler: this.GetAblyToken,
       method: "GET",
-      path: "/rant/token",
+      path: "/rant/ably/token",
+    });
+    this.routes.push({
+      handler: this.GetStreamToken,
+      method: "GET",
+      path: "/rant/get-stream/token",
     });
   }
 
-  public async GetRantToken(req: Request, res: Response) {
+  public async GetAblyToken(req: Request, res: Response) {
     try {
       const token = getTokenFromHeader(req);
       const verified = verifyToken(token);
@@ -29,6 +35,25 @@ export class RantController implements IController {
         clientId: user._id as unknown as string,
       });
       return Ok(res, ablyToken);
+    } catch (err) {
+      console.log(err);
+      return UnAuthorized(res, err);
+    }
+  }
+
+  public async GetStreamToken(req: Request, res: Response) {
+    try {
+      const client = await new StreamClient(
+        "n9y75xde4yk4",
+        "2u4etpbwhrgb8kmffgt879pgknmdndzxs82hptqtxndt39ku3shc6yavpup2us8e",
+        "1326954"
+      );
+      const token = getTokenFromHeader(req);
+      const verified = verifyToken(token);
+      const exp = Math.round(new Date().getTime() / 1000) + 60 * 60;
+
+      const streamToken = await client.createToken(verified.id, exp);
+      return Ok(res, streamToken);
     } catch (err) {
       console.log(err);
       return UnAuthorized(res, err);

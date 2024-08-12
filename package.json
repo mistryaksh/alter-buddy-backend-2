@@ -41,6 +41,7 @@
      },
      "dependencies": {
           "@100mslive/server-sdk": "^0.3.0",
+          "@stream-io/node-sdk": "^0.3.0",
           "@types/ably": "^1.0.0",
           "@types/method-override": "^0.0.35",
           "@types/uuid": "^9.0.4",
@@ -58,6 +59,7 @@
           "express": "^4.17.1",
           "express-jwt": "^6.0.0",
           "express-validator": "^6.8.0",
+          "getstream": "^8.4.1",
           "jsonwebtoken": "^8.5.1",
           "moment": "^2.29.4",
           "mongoose": "^7.5.0",
