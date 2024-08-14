@@ -17,21 +17,32 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  socket.on("connected", () => {
-    console.log("client connected");
+// When a client connects
+io.on('connection', (socket) => {
+  console.log('a user connected:', socket.id);
+
+  // Listen for chat request from the first app
+  socket.on('requestChat', (data) => {
+      console.log('Chat requested:', data);
+
+      // Emit chat request to the second app
+      socket.broadcast.emit('receiveChatRequest', data);
   });
 
-  // User hit the request to the mentor
-  socket.on("rantData", (data: { roomId: string }) => {
-    console.log(data);
+  // Listen for chat acceptance from the second app
+  socket.on('acceptChat', (data, callback) => {
+      console.log('Chat accepted:', data);
 
-    // Mentor receive channel id
-    io.emit("rantDataTransfer", data);
+      // Notify the first app that the chat has been accepted
+      socket.broadcast.emit('chatAccepted', data);
+
+      // Call the callback to acknowledge
+      if (callback) callback();
   });
 
-  socket.on("disconnected", () => {
-    socket.disconnect();
+  // When the client disconnects
+  socket.on('disconnect', () => {
+      console.log('user disconnected:', socket.id);
   });
 });
 
