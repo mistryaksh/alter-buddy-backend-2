@@ -6,7 +6,7 @@ import { Chat, Notification } from "model";
 import { IChatProps } from "interface/chat.interface";
 import mongoose from "mongoose";
 
-const port = normalizePort(process.env.PORT || 8080);
+const port = normalizePort(8080);
 app.set("port", port);
 
 export const server = http.createServer(app);
