@@ -7,11 +7,13 @@ const MentorSchema = new mongoose.Schema<IMentorProps>(
       username: { type: mongoose.Schema.Types.String, required: true },
       password: { type: mongoose.Schema.Types.String, required: true },
     },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Category",
-    },
+    category: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Category",
+      },
+    ],
     contact: {
       email: { type: mongoose.Schema.Types.String, required: true },
       mobile: { type: mongoose.Schema.Types.String, required: true },
@@ -31,13 +33,8 @@ const MentorSchema = new mongoose.Schema<IMentorProps>(
     inCall: { type: mongoose.Schema.Types.Boolean, default: false },
     videoLink: { type: mongoose.Schema.Types.String },
     description: { type: mongoose.Schema.Types.String },
-    subCategory: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "SubCategory",
-        required: true,
-      },
-    ],
+    image: { type: mongoose.Schema.Types.String, required: true },
+    languages: [{ type: mongoose.Schema.Types.String, required: true }],
   },
   {
     timestamps: true,

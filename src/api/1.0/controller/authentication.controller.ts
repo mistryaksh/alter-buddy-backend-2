@@ -6,7 +6,7 @@ import {
   IMentorAuthProps,
   IMentorProps,
 } from "interface";
-import { Mentor, User, Wallet } from "model";
+import { Mentor, User, BuddyCoins } from "model";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -61,11 +61,13 @@ export class AuthenticationController implements IController {
   }
   public async UserSignIn(req: Request, res: Response) {
     try {
-      const { mobile, password }: ILoginProps = req.body;
-      if (!mobile || !password) {
+      const { mobileOrEmail, password }: ILoginProps = req.body;
+      if (!mobileOrEmail || !password) {
         return UnAuthorized(res, "missing fields");
       }
-      const user = await User.findOne({ mobile });
+      const user = await User.findOne({
+        $or: [{ mobile: mobileOrEmail }, { email: mobileOrEmail }],
+      });
       if (!user) {
         return UnAuthorized(res, "no user found");
       }
@@ -126,9 +128,8 @@ export class AuthenticationController implements IController {
           lastName: name.lastName,
         },
       }).save();
-      await new Wallet({
-        balance: 100,
-        currency: "in",
+      await new BuddyCoins({
+        balance: 0,
         userId: newUser._id,
       }).save();
 
@@ -155,10 +156,11 @@ export class AuthenticationController implements IController {
         category,
         contact,
         name,
-        subCategory,
         specialists,
         videoLink,
         description,
+        languages,
+        image,
       }: IMentorProps = req.body;
       if (
         !auth.password ||
@@ -166,13 +168,13 @@ export class AuthenticationController implements IController {
         !category ||
         !contact.address ||
         !contact.email ||
-        !contact.email ||
         !name.firstName ||
         !name.lastName ||
-        subCategory.length === 0 ||
         !specialists ||
         !videoLink ||
-        !description
+        !description ||
+        !languages ||
+        !image
       ) {
         return UnAuthorized(res, "missing fields");
       } else {

@@ -45,8 +45,7 @@ export class RantController implements IController {
     try {
       const client = await new StreamClient(
         "n9y75xde4yk4",
-        "2u4etpbwhrgb8kmffgt879pgknmdndzxs82hptqtxndt39ku3shc6yavpup2us8e",
-        "1326954"
+        "2u4etpbwhrgb8kmffgt879pgknmdndzxs82hptqtxndt39ku3shc6yavpup2us8e"
       );
       const token = getTokenFromHeader(req);
       const verified = verifyToken(token);

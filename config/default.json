@@ -4,5 +4,7 @@
   "NODE_NO_WARNINGS": 1,
   "SUPPRESS_NO_CONFIG_WARNING": false,
   "JWT_EXPIRE": "3d",
-  "ABLY_KEY": "LrjjGQ.DPg-_Q:wmhnpNyD3kIbv-caW_glCxDlyIYwlT6pYQJTE4EJdCw"
+  "ABLY_KEY": "LrjjGQ.DPg-_Q:wmhnpNyD3kIbv-caW_glCxDlyIYwlT6pYQJTE4EJdCw",
+  "RAZORPAY_KEY_ID": "rzp_test_dJaErbvl4HcIbt",
+  "RAZORPAY_KEY_SECRET": "qvqtpQ9NxlngJfPB88iHYOVl"
 }

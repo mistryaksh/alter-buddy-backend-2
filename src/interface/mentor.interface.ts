@@ -26,27 +26,18 @@ export interface IMentorProps {
   name: IMentorNameProps;
   contact: IMentorContactProps;
   auth: IMentorAuthProps;
-  category: mongoose.Schema.Types.ObjectId;
+  category: mongoose.Schema.Types.ObjectId[];
   specialists: string[];
   accountStatus: IMentorAccountStatus;
   acType: "MENTOR";
-  subCategory: mongoose.Schema.Types.ObjectId[];
   inCall?: boolean;
   videoLink?: string;
   description?: string;
+  image: string;
+  languages: string[];
 }
 
 export interface ICategoryProps {
   title: string;
   status: boolean;
-}
-
-export interface ISubCategoryProps {
-  label: string;
-  categoryId: mongoose.Schema.Types.ObjectId;
-  subTitle: string;
-  desc: string;
-  symptoms: string[];
-  causes: string[];
-  treatment: string[];
 }

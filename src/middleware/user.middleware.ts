@@ -76,12 +76,9 @@ export const AuthForAdmin = async (
     if (!token) {
       return BadRequest(res, "please login");
     }
-    console.log("TOKEN", token);
 
     const verified = verifyToken(token);
-    console.log("VERIFICATION", verified);
     const user = await User.findOne({ _id: verified.id });
-    console.log("USER", user);
     if (user.acType !== "ADMIN") {
       return UnAuthorized(res, "access_denied");
     }

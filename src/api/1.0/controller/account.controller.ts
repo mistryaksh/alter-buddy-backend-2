@@ -7,6 +7,7 @@ import {
 } from "middleware/user.middleware";
 import { Mentor, User } from "model";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
+import bcrypt from "bcrypt";
 
 export class AccountController implements IController {
   public routes: IControllerRoutes[] = [];
@@ -114,56 +115,34 @@ export class AccountController implements IController {
 
   public async UpdateUserProfile(req: Request, res: Response) {
     try {
-      const {
-        lastName,
-        firstName,
-        mobile,
-        email,
-        referralCode,
-        myInitialCategories,
-        dob,
-      } = req.body;
-      if (
-        !lastName ||
-        !email ||
-        !firstName ||
-        !mobile ||
-        !myInitialCategories ||
-        !dob
-      ) {
-        return UnAuthorized(
-          res,
-          "missing details please fill up all the details first"
-        );
-      }
-      const findUser = await User.findOne({ email });
-      if (findUser) {
-        const updatedUser = await User.findByIdAndUpdate(
-          { _id: findUser._id },
-          {
-            $set: {
-              mobile,
-              name: {
-                firstName: firstName,
-                lastName: lastName,
+      const token = getTokenFromHeader(req);
+      const verified = verifyToken(token);
+      const user = await User.findOne({ _id: verified.id });
+
+      if (user) {
+        if (req.body.password) {
+          const hashPassword = bcrypt.hashSync(req.body.password, 10);
+          await User.findOneAndUpdate(
+            { _id: user._id },
+            { $set: { password: hashPassword } }
+          );
+        } else {
+          const updatedUser = await User.findByIdAndUpdate(
+            { _id: user._id },
+            {
+              $set: {
+                ...req.body,
               },
-              referralCode,
-              myInitialCategories,
-              dob,
-            },
-          },
-          {
-            returnDocument: "after",
-          }
-        );
-        return Ok(
-          res,
-          `${updatedUser.name.firstName} your profile has been saved!`
-        );
-      } else {
-        return UnAuthorized(res, "you don't have an account please create one");
+            }
+          );
+          return Ok(
+            res,
+            `${updatedUser.name.firstName} your profile has been saved!`
+          );
+        }
       }
     } catch (err) {
+      console.log(err);
       return UnAuthorized(res, err);
     }
   }

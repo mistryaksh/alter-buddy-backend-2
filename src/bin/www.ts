@@ -18,42 +18,42 @@ const io = new Server(server, {
 });
 
 // When a client connects
-io.on('connection', (socket) => {
-  console.log('a user connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("a user connected:", socket.id);
 
   // Listen for chat request from the first app
-  socket.on('requestChat', (data) => {
-    console.log('Chat requested:', data);
+  socket.on("requestChat", (data) => {
+    console.log("Chat requested:", data);
 
     // Emit chat request to the second app
-    socket.broadcast.emit('receiveChatRequest', data);
+    socket.broadcast.emit("receiveChatRequest", data);
   });
 
   // Listen for chat acceptance from the second app
-  socket.on('acceptChat', (data, callback) => {
-    console.log('Chat accepted:', data);
+  socket.on("acceptChat", (data, callback) => {
+    console.log("Chat accepted:", data);
 
     // Notify the first app that the chat has been accepted
-    socket.broadcast.emit('chatAccepted', data);
+    socket.broadcast.emit("chatAccepted", data);
 
     // Call the callback to acknowledge
     if (callback) callback();
   });
 
   // Handle leaving the chat
-  socket.on('leaveChat', (data, callback) => {
-    console.log('Chat left:', data);
+  socket.on("leaveChat", (data, callback) => {
+    console.log("Chat left:", data);
 
     // Notify the other app that the chat was left
-    socket.broadcast.emit('chatLeft', data);
+    socket.broadcast.emit("chatLeft", data);
 
     // Acknowledge the event to the client
     if (callback) callback();
   });
 
   // When the client disconnects
-  socket.on('disconnect', () => {
-    console.log('user disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("user disconnected:", socket.id);
   });
 });
 
