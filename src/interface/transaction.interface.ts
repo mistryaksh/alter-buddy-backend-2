@@ -8,4 +8,5 @@ export interface ITransactionProps {
   walletId: ObjectId;
   transactionType: string;
   status: "success" | "failed";
+  transactionId: string;
 }

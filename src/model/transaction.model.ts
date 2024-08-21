@@ -18,6 +18,7 @@ const TransactionSchema = new mongoose.Schema<ITransactionProps>(
     },
     transactionType: { type: mongoose.Schema.Types.String, required: true },
     status: { type: mongoose.Schema.Types.String, required: true },
+    transactionId: { type: mongoose.Schema.Types.String, required: true },
   },
   { timestamps: true }
 );

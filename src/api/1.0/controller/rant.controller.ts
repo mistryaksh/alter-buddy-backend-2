@@ -43,7 +43,7 @@ export class RantController implements IController {
 
   public async GetStreamToken(req: Request, res: Response) {
     try {
-      const client = await new StreamClient(
+      const client = new StreamClient(
         "n9y75xde4yk4",
         "2u4etpbwhrgb8kmffgt879pgknmdndzxs82hptqtxndt39ku3shc6yavpup2us8e"
       );
@@ -51,7 +51,7 @@ export class RantController implements IController {
       const verified = verifyToken(token);
       const exp = Math.round(new Date().getTime() / 1000) + 60 * 60;
 
-      const streamToken = await client.createToken(verified.id, exp);
+      const streamToken = client.createToken(verified.id, exp);
       return Ok(res, streamToken);
     } catch (err) {
       console.log(err);

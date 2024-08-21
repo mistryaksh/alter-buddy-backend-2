@@ -5,6 +5,35 @@ import { User, BuddyCoins, Transaction } from "model";
 import { RazorPayService } from "services/razorpay.services";
 import { getTokenFromHeader, Ok, UnAuthorized, verifyToken } from "utils";
 
+function generateCustomTransactionId(
+  prefix: string,
+  totalLength: number
+): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const prefixLength = prefix.length;
+  const separator = "-";
+
+  // Calculate the length of the random string component
+  const randomStringLength = totalLength - prefixLength - separator.length;
+
+  if (randomStringLength <= 0) {
+    throw new Error(
+      "Total length must be greater than the length of the prefix and separator."
+    );
+  }
+
+  let randomString = "";
+
+  // Generate a random string of the calculated length
+  for (let i = 0; i < randomStringLength; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    randomString += chars[randomIndex];
+  }
+
+  // Create the transaction ID by combining the prefix with the random string
+  return `${prefix}${separator}${randomString}`;
+}
+
 export class WalletController implements IController {
   public routes: IControllerRoutes[] = [];
 
@@ -116,6 +145,7 @@ export class WalletController implements IController {
           userId: user._id,
           status: "success",
           transactionType: "recharge successful",
+          transactionId: generateCustomTransactionId("BDDY", 10),
         }).save();
         return Ok(res, paymentStatus);
       } else {
@@ -126,6 +156,7 @@ export class WalletController implements IController {
           userId: user._id,
           status: "failed",
           transactionType: "recharge failed",
+          transactionId: generateCustomTransactionId("BDDY", 10),
         }).save();
         return Ok(res, paymentStatus);
       }
@@ -155,11 +186,13 @@ export class WalletController implements IController {
           { $set: { balance: wallet.balance - coinsToUsed } }
         );
         await new Transaction({
+          transactionId: generateCustomTransactionId("BDDY", 10),
           transactionType: useType,
           closingBal: wallet.balance - coinsToUsed,
           debitAmt: coinsToUsed,
           walletId: wallet._id,
           userId: user._id,
+          status: "success",
         }).save();
         return Ok(res, "SUCCESS");
       } else {
