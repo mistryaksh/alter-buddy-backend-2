@@ -91,10 +91,6 @@ export class AccountController implements IController {
           path: "category",
           model: "Category",
         },
-        {
-          path: "subCategory",
-          model: "SubCategory",
-        },
       ]);
       return Ok(res, mentor);
     } catch (err) {
