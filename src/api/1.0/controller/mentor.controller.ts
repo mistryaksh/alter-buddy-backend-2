@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { IControllerRoutes, IController } from "interface";
+import { AuthForAdmin } from "middleware";
 import { Mentor } from "model";
 import { Ok, UnAuthorized } from "utils";
 
@@ -23,6 +24,7 @@ export class MentorController implements IController {
       method: "GET",
     });
   }
+
   public async GetAllMentor(req: Request, res: Response) {
     try {
       const mentor = await Mentor.find()

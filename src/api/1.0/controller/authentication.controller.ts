@@ -197,13 +197,63 @@ export class AuthenticationController implements IController {
           from: "alterbuddy8@gmail.com",
           to: newMentor.contact.email,
           subject: `${newMentor.name.firstName} Welcome to AlterBuddy! start your journey from here`,
-          html: `Hello ${name.firstName} ${name.lastName},
-                    <br/>
-                    Your account for mentor is registered successfully please mark your attention on this  mail this mail has your account credentials which can be helpful for mentoring.
-                    <h1>Your Username - ${newMentor.auth.username}</h1>
-                    <h1>Your Password - ${newMentor.auth.password}</h1>
-                    <br/>
-                    Please do not share password with anyone for making it secure.`,
+          html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Registration Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+        }
+        h1 {
+            color: #601E28;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .important {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Hello ${name.firstName} ${name.lastName},</p>
+
+        <p>Welcome to AlterBuddy! We are excited to inform you that your account for mentoring has been registered successfully.</p>
+
+        <p class="important">Please make sure to keep this email safe, as it contains your account credentials:</p>
+
+        <h1>Your Username: ${newMentor.auth.username}</h1>
+        <h1>Your Password: ${newMentor.auth.password}</h1>
+
+        <p>For security reasons, please do not share your password with anyone.</p>
+
+        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
+
+        <p class="footer">Thank you for being a part of our community!</p>
+    </div>
+</body>
+</html>
+`,
         };
         var transporter = Nodemailer.createTransport({
           service: "gmail",
