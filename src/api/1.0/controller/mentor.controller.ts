@@ -27,7 +27,7 @@ export class MentorController implements IController {
 
   public async GetAllMentor(req: Request, res: Response) {
     try {
-      const mentor = await Mentor.find()
+      const mentor = await Mentor.find({ status: true })
         .sort({ createdAt: -1 })
         .populate("category")
         .sort({ createdAt: -1 });

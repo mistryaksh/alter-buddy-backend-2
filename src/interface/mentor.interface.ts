@@ -35,6 +35,7 @@ export interface IMentorProps {
   description?: string;
   image: string;
   languages: string[];
+  status: boolean;
 }
 
 export interface ICategoryProps {
