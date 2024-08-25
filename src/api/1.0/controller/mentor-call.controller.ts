@@ -125,7 +125,7 @@ export class MentorCallSchedule implements IController {
       const slots = await CallSchedule.find({
         mentorId: mentorId,
         slotsDate: { $gt: today },
-      });
+      }).populate("slots.userId");
       return Ok(res, slots);
     } catch (err) {
       return UnAuthorized(res, err);

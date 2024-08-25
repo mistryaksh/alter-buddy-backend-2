@@ -191,6 +191,7 @@ export class AuthenticationController implements IController {
           },
           videoLink: "https://youtu.be/samaSr6cmLU?si=j0c7p5n6E8HCushK",
           ...req.body,
+          status: true,
         }).save();
 
         var mailOptions: SendMailOptions = {
