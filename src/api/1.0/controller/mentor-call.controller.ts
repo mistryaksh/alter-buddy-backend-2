@@ -6,8 +6,8 @@ import {
 } from "interface";
 import { AuthForMentor } from "middleware";
 import { CallSchedule, Mentor, User } from "model";
-import mongoose from "mongoose";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
+import moment from "moment";
 
 export class MentorCallSchedule implements IController {
   public routes: IControllerRoutes[] = [];
@@ -120,7 +120,12 @@ export class MentorCallSchedule implements IController {
   public async GetSlotByMentorId(req: Request, res: Response) {
     try {
       const mentorId = req.params.mentorId;
-      const slots = await CallSchedule.find({ mentorId: mentorId });
+      const today = moment().startOf("day").toISOString();
+
+      const slots = await CallSchedule.find({
+        mentorId: mentorId,
+        slotsDate: { $gt: today },
+      });
       return Ok(res, slots);
     } catch (err) {
       return UnAuthorized(res, err);

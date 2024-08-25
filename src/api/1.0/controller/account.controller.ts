@@ -74,9 +74,9 @@ export class AccountController implements IController {
     try {
       const token = getTokenFromHeader(req);
       const verified = verifyToken(token);
-      const mentor = await Mentor.findById({ _id: verified.id })
-        .populate("category")
-        .populate("subCategory");
+      const mentor = await Mentor.findById({ _id: verified.id }).populate(
+        "category"
+      );
       return Ok(res, mentor);
     } catch (err) {
       return UnAuthorized(res, err);

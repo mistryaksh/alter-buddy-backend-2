@@ -34,7 +34,7 @@ class RazorPayServices {
     return await razorpay.paymentLink.create({
       amount,
       customer: { name: userName, email: email, contact: mobile },
-      callback_url: "http://localhost:3000/user/payment?",
+      callback_url: "https://alterbuddy.com/user/payment?",
     });
   }
 

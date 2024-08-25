@@ -12,3 +12,4 @@ export * from "./wallet.controller";
 export * from "./notification.controller";
 export * from "./rant.controller";
 export * from "./packages.controller";
+export * from "./video-call.controller";
