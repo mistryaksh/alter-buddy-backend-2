@@ -9,5 +9,6 @@ export interface IPackagesProps {
   _id?: string;
   createdAt?: string;
   updatedAt?: string;
+  mentorId: mongoose.Schema.Types.ObjectId;
   status: boolean;
 }

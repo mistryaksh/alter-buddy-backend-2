@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { IControllerRoutes, IController, IPackagesProps } from "interface";
-import { AuthForAdmin } from "middleware";
+import { AuthForAdmin, AuthForMentor } from "middleware";
 import { Packages } from "model";
-import { Ok, UnAuthorized } from "utils";
+import { getTokenFromHeader, Ok, UnAuthorized, verifyToken } from "utils";
+import { ObjectId } from "mongodb";
 
 export class PackagesController implements IController {
   public routes: IControllerRoutes[] = [];
@@ -17,24 +18,59 @@ export class PackagesController implements IController {
       handler: this.CreateNewPackages,
       method: "POST",
       path: "/packages",
-      middleware: [AuthForAdmin],
+      middleware: [AuthForMentor],
     });
     this.routes.push({
       handler: this.UpdatePackage,
       method: "PUT",
       path: "/packages/:id",
-      middleware: [AuthForAdmin],
+      middleware: [AuthForMentor],
     });
     this.routes.push({
       handler: this.DeletePackage,
       method: "DELETE",
       path: "/packages/:id",
-      middleware: [AuthForAdmin],
+      middleware: [AuthForMentor],
     });
+    this.routes.push({
+      handler: this.GetMyPackages,
+      method: "GET",
+      path: "/packages/my-packages",
+      middleware: [AuthForMentor],
+    });
+    this.routes.push({
+      handler: this.GetPackageByMentorId,
+      method: "GET",
+      path: "/packages/mentor/:mentorId",
+    });
+  }
+  public async GetMyPackages(req: Request, res: Response) {
+    try {
+      const token = getTokenFromHeader(req);
+      const id = verifyToken(token);
+
+      const packages = await Packages.find({ mentorId: id.id })
+        .populate("categoryId")
+        .populate("mentorId");
+      return Ok(res, packages);
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
   }
   public async GetAllPackages(req: Request, res: Response) {
     try {
-      const packages = await Packages.find({}).populate("categoryId");
+      const packages = await Packages.find({})
+        .populate("categoryId")
+        .populate("mentorId");
+      return Ok(res, packages);
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  }
+
+  public async GetPackageByMentorId(req: Request, res: Response) {
+    try {
+      const packages = await Packages.find({ mentorId: req.params.mentorId });
       return Ok(res, packages);
     } catch (err) {
       return UnAuthorized(res, err);
@@ -55,15 +91,16 @@ export class PackagesController implements IController {
         return UnAuthorized(res, "missing fields");
       }
 
+      const token = getTokenFromHeader(req);
+      const id = verifyToken(token);
+
       const packageExist = await Packages.findOne({
         categoryId,
         packageType,
-        packageName,
-        price,
       });
 
       if (packageExist) {
-        return UnAuthorized(res, "packages is already in the list");
+        return UnAuthorized(res, "cannot create duplicate package");
       }
 
       const packages = await new Packages({
@@ -73,9 +110,11 @@ export class PackagesController implements IController {
         price,
         description,
         status: false,
+        mentorId: new ObjectId(id.id),
       }).save({ validateBeforeSave: true });
       return Ok(res, `${packages.packageName} is created`);
     } catch (err) {
+      console.log(err);
       return UnAuthorized(res, err);
     }
   }

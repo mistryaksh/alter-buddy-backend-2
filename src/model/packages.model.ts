@@ -13,6 +13,11 @@ const PackagesSchema = new mongoose.Schema<IPackagesProps>(
     packageType: { type: mongoose.Schema.Types.String, required: true },
     price: { type: mongoose.Schema.Types.Number, required: true },
     status: { type: mongoose.Schema.Types.Boolean },
+    mentorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mentor",
+      required: true,
+    },
   },
   {
     timestamps: true,
