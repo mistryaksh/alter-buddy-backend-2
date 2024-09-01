@@ -143,6 +143,7 @@ export class AuthenticationController implements IController {
       return Ok(res, {
         token,
         mobile: newUser.mobile,
+        user: newUser,
       });
     } catch (err) {
       return UnAuthorized(res, err);
