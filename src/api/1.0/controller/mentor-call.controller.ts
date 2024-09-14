@@ -47,6 +47,20 @@ export class MentorCallSchedule implements IController {
       method: "PUT",
       path: "/slot/book",
     });
+    this.routes.push({
+      handler: this.GetAllSlots,
+      method: "GET",
+      path: "/all-slots",
+    });
+  }
+
+  public async GetAllSlots(req: Request, res: Response) {
+    try {
+      const slots = await CallSchedule.find();
+      return Ok(res, slots);
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
   }
 
   public async MultiDaySchedule(req: Request, res: Response) {

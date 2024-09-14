@@ -162,6 +162,7 @@ export class AuthenticationController implements IController {
         description,
         languages,
         image,
+        qualification,
       }: IMentorProps = req.body;
       if (
         !auth.password ||
@@ -175,7 +176,8 @@ export class AuthenticationController implements IController {
         !videoLink ||
         !description ||
         !languages ||
-        !image
+        !image ||
+        !qualification
       ) {
         return UnAuthorized(res, "missing fields");
       } else {

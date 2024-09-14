@@ -36,6 +36,7 @@ const MentorSchema = new mongoose.Schema<IMentorProps>(
     image: { type: mongoose.Schema.Types.String, required: true },
     languages: [{ type: mongoose.Schema.Types.String, required: true }],
     status: { type: mongoose.Schema.Types.Boolean },
+    qualification: { type: mongoose.Schema.Types.String, required: true },
   },
   {
     timestamps: true,
