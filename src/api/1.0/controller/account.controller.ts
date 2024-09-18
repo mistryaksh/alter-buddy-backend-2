@@ -6,7 +6,13 @@ import {
   AuthForAdmin,
 } from "middleware/user.middleware";
 import { Mentor, User } from "model";
-import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
+import {
+  NotFound,
+  Ok,
+  UnAuthorized,
+  getTokenFromHeader,
+  verifyToken,
+} from "utils";
 import bcrypt from "bcrypt";
 
 export class AccountController implements IController {
@@ -113,30 +119,38 @@ export class AccountController implements IController {
     try {
       const token = getTokenFromHeader(req);
       const verified = verifyToken(token);
-      const user = await User.findOne({ _id: verified.id });
 
-      if (user) {
-        if (req.body.password) {
-          const hashPassword = bcrypt.hashSync(req.body.password, 10);
-          await User.findOneAndUpdate(
-            { _id: user._id },
-            { $set: { password: hashPassword } }
-          );
-        } else {
-          const updatedUser = await User.findByIdAndUpdate(
-            { _id: user._id },
-            {
-              $set: {
-                ...req.body,
-              },
-            }
-          );
-          return Ok(
-            res,
-            `${updatedUser.name.firstName} your profile has been saved!`
-          );
-        }
+      if (!verified) {
+        return UnAuthorized(res, "Invalid or expired token");
       }
+
+      const user = await User.findById(verified.id);
+
+      if (!user) {
+        return NotFound(res, "User not found");
+      }
+
+      let updateData = { ...req.body };
+
+      if (req.body.password) {
+        const hashPassword = bcrypt.hashSync(req.body.password, 10);
+        updateData.password = hashPassword;
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: updateData },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return UnAuthorized(res, "Failed to update user");
+      }
+
+      return Ok(
+        res,
+        `${updatedUser.name?.firstName ?? "User"} your profile has been saved!`
+      );
     } catch (err) {
       console.log(err);
       return UnAuthorized(res, err);
