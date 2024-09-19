@@ -63,6 +63,16 @@ export class AuthenticationController implements IController {
       method: "POST",
       path: "/forgot-password-mail",
     });
+    this.routes.push({
+      handler: this.ValidateResetToken,
+      method: "GET",
+      path: "/validate-reset-token",
+    });
+    this.routes.push({
+      handler: this.UserResetPassword,
+      method: "PUT",
+      path: "/reset-password",
+    });
   }
   public async UserSignIn(req: Request, res: Response) {
     try {
@@ -414,7 +424,7 @@ export class AuthenticationController implements IController {
             config.get("JWT_SECRET"),
             { expiresIn: "15m" }
           );
-          const resetLink = `http://localhost:3000/reset-password?token${token}`;
+          const resetLink = `http://localhost:3000/reset-password?token=${token}`;
           var mailOptions: SendMailOptions = {
             from: "alterbuddy8@gmail.com",
             to: user.email,
@@ -471,6 +481,9 @@ export class AuthenticationController implements IController {
             font-size: 12px;
             color: #aaaaaa;
         }
+            a {
+            color:#fff!important;
+            }
     </style>
 </head>
 <body>
@@ -515,6 +528,70 @@ export class AuthenticationController implements IController {
       }
     } catch (err) {
       return UnAuthorized(res, err);
+    }
+  }
+  public async ValidateResetToken(req: Request, res: Response) {
+    try {
+      const resetToken: string = req.query.resetToken.toString();
+      const verify = verifyToken(resetToken);
+      if (verify) {
+        return Ok(res, "DONE");
+      }
+    } catch (err) {
+      if (err.message === "jwt expired") {
+        return UnAuthorized(
+          res,
+          "reset token is expired please request new one!"
+        );
+      } else return UnAuthorized(res, err);
+    }
+  }
+
+  public async UserResetPassword(req: Request, res: Response) {
+    try {
+      const {
+        password,
+        newPassword,
+        token,
+      }: {
+        password: string;
+        newPassword: string;
+        token: string;
+      } = req.body;
+
+      if (!password || !newPassword) {
+        return UnAuthorized(res, "missing fields");
+      } else {
+        if (password !== newPassword) {
+          return UnAuthorized(res, "both password should be matched");
+        } else {
+          if (!token) {
+            return UnAuthorized(res, "TOKEN_NOT_EXIST");
+          }
+          const verify = verifyToken(token);
+          if (verify.email) {
+            const hashPassword = bcrypt.hashSync(newPassword, 10);
+            const user = await User.findOneAndUpdate(
+              { email: verify.email },
+              {
+                $set: {
+                  password: hashPassword,
+                },
+              }
+            );
+            return Ok(
+              res,
+              `${user.name.firstName} ${user.name.lastName} your account has been recover successfully!`
+            );
+          } else {
+            return UnAuthorized(res, "something went wrong");
+          }
+        }
+      }
+    } catch (err) {
+      if (err.message === "jwt expired") {
+        return UnAuthorized(res, "TOKEN_EXPIRE");
+      } else return UnAuthorized(res, err);
     }
   }
 }
