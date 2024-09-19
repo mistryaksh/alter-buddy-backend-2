@@ -58,6 +58,11 @@ export class AuthenticationController implements IController {
       path: "/mentor/sign-out",
       middleware: [AuthForMentor],
     });
+    this.routes.push({
+      handler: this.UserForgotPassword,
+      method: "POST",
+      path: "/forgot-password-mail",
+    });
   }
   public async UserSignIn(req: Request, res: Response) {
     try {
@@ -386,6 +391,128 @@ export class AuthenticationController implements IController {
         { $set: { online: false } }
       );
       return Ok(res, `logout successful`);
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  }
+
+  public async UserForgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return UnAuthorized(res, "please enter email first");
+      } else {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return UnAuthorized(res, "there is no user with this email");
+        } else {
+          const token = jwt.sign(
+            {
+              email,
+            },
+            config.get("JWT_SECRET"),
+            { expiresIn: "15m" }
+          );
+          const resetLink = `http://localhost:3000/reset-password?token${token}`;
+          var mailOptions: SendMailOptions = {
+            from: "alterbuddy8@gmail.com",
+            to: user.email,
+            subject: `${user.name.firstName} Welcome to AlterBuddy! Reset Your password!`,
+            html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            color: #d45561;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .content {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .content p {
+            font-size: 16px;
+            color: #333333;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #d45561;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #aaaaaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Password Reset</h1>
+        </div>
+        <div class="content">
+            <p>Hello, ${user.name.firstName} ${user.name.lastName}</p>
+            <p>It looks like you requested to reset your password. Click the button below to reset it:</p>
+            <a href=${resetLink} class="button">Reset Password</a>
+            <p>This Link is valid for only 15 minutes If you didn't request this, please ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Your Company. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+`,
+          };
+
+          var transporter = Nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "alterbuddy8@gmail.com",
+              pass: "ngbtwrjshngkwxqo",
+            },
+          });
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
+          return Ok(
+            res,
+            `Hey! ${user.name.firstName} we identified you & we have sent an email for reset your password`
+          );
+        }
+      }
     } catch (err) {
       return UnAuthorized(res, err);
     }
