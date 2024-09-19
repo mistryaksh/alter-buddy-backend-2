@@ -424,7 +424,7 @@ export class AuthenticationController implements IController {
             config.get("JWT_SECRET"),
             { expiresIn: "15m" }
           );
-          const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+          const resetLink = `https://alterbuddy.com/reset-password?token=${token}`;
           var mailOptions: SendMailOptions = {
             from: "alterbuddy8@gmail.com",
             to: user.email,
