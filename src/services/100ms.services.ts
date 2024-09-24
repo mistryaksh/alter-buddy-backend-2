@@ -31,8 +31,7 @@ class VideoCallServices {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjcxNjA0NTgsImV4cCI6MTcyNzc2NTI1OCwianRpIjoiNzBjZTg3YzctYjY1ZS00MDljLTlmYTEtZTIwM2QyOGNhZTMzIiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE3MjcxNjA0NTgsImFjY2Vzc19rZXkiOiI2NjRjYjM3MTQyODY2NDVjNmQyNGM5N2EifQ.iGez04sFMC5nfCOrFLvRdJP9hJR3MRDRQsQwsgxPWdM",
+            Authorization: `Bearer ${process.env.REACT_APP_100MD_SDK_TOKEN}`,
           },
         }
       );
@@ -51,8 +50,7 @@ class VideoCallServices {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjcxNjA0NTgsImV4cCI6MTcyNzc2NTI1OCwianRpIjoiNzBjZTg3YzctYjY1ZS00MDljLTlmYTEtZTIwM2QyOGNhZTMzIiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE3MjcxNjA0NTgsImFjY2Vzc19rZXkiOiI2NjRjYjM3MTQyODY2NDVjNmQyNGM5N2EifQ.iGez04sFMC5nfCOrFLvRdJP9hJR3MRDRQsQwsgxPWdM` as string,
+            Authorization: `Bearer ${process.env.REACT_APP_100MD_SDK_TOKEN}`,
           },
         }
       );

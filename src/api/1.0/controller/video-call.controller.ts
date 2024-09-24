@@ -42,11 +42,11 @@ export class VideoCallController implements IController {
           roomId: room.id,
         });
         console.log(roomCode.data);
-        // return Ok(res, {
-        //   room: room,
-        //   mentorCode: roomCode.data.find((prop: any) => prop.role === "mentor"),
-        //   userCode: roomCode.data.find((prop: any) => prop.role === "host"),
-        // });
+        return Ok(res, {
+          room: room,
+          mentorCode: roomCode.data.find((prop: any) => prop.role === "mentor"),
+          userCode: roomCode.data.find((prop: any) => prop.role === "host"),
+        });
       } else {
         return UnAuthorized(res, "something went wrong");
       }
