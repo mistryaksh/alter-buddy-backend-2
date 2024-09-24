@@ -41,17 +41,18 @@ export class VideoCallController implements IController {
         const roomCode = await VideoCallService.Create100MSRoomCode({
           roomId: room.id,
         });
-        return Ok(res, {
-          room: room,
-          mentorCode: roomCode.data.find((prop: any) => prop.role === "mentor"),
-          userCode: roomCode.data.find((prop: any) => prop.role === "host"),
-        });
+        console.log(roomCode.data);
+        // return Ok(res, {
+        //   room: room,
+        //   mentorCode: roomCode.data.find((prop: any) => prop.role === "mentor"),
+        //   userCode: roomCode.data.find((prop: any) => prop.role === "host"),
+        // });
       } else {
         return UnAuthorized(res, "something went wrong");
       }
     } catch (err) {
-      console.log(err);
-      return UnAuthorized(res, err);
+      console.log("CONTROLLER", err);
+      return UnAuthorized(res, err.data.response.message);
     }
   }
 

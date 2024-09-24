@@ -1,8 +1,7 @@
 import { SDK } from "@100mslive/server-sdk";
-import { callType } from "interface/chat.interface";
 import dotenv from "dotenv";
-import { CreateParams } from "@100mslive/server-sdk/dist/types/types/api_types/room";
 import axios from "axios";
+
 dotenv.config();
 
 class VideoCallServices {
@@ -33,7 +32,7 @@ class VideoCallServices {
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjQ1MTIyNDUsImV4cCI6MTcyNTExNzA0NSwianRpIjoiOWNjM2UyMTItZTZlOC00OGRlLWIwZmEtMmJmMTVhNjg0Yzk3IiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE3MjQ1MTIyNDUsImFjY2Vzc19rZXkiOiI2NjRjYjM3MTQyODY2NDVjNmQyNGM5N2EifQ.KrRjJSWm5_CI3l9v0n19ETXvxwM_eZWBjK-lHH6rRgY",
+              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjcxNjA0NTgsImV4cCI6MTcyNzc2NTI1OCwianRpIjoiNzBjZTg3YzctYjY1ZS00MDljLTlmYTEtZTIwM2QyOGNhZTMzIiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE3MjcxNjA0NTgsImFjY2Vzc19rZXkiOiI2NjRjYjM3MTQyODY2NDVjNmQyNGM5N2EifQ.iGez04sFMC5nfCOrFLvRdJP9hJR3MRDRQsQwsgxPWdM",
           },
         }
       );
@@ -45,6 +44,7 @@ class VideoCallServices {
 
   public async Create100MSRoomCode({ roomId }: { roomId: string }) {
     try {
+      console.log("ROOM ID", roomId);
       const room = await axios.post(
         `https://api.100ms.live/v2/room-codes/room/${roomId}`,
         {},
@@ -52,13 +52,14 @@ class VideoCallServices {
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjYxNjAxODIsImV4cCI6MTcyNzM2OTc4MiwianRpIjoiYzc1ZDBhYjgtZDBiNC00MjRkLWE4YjUtNzRkNDFmMWE0OWM1IiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE3MjYxNjAxODIsImFjY2Vzc19rZXkiOiI2NjRjYjM3MTQyODY2NDVjNmQyNGM5N2EifQ.oEssIwSdtt8wqEfvtIeZ_jGUZ7ksFsWT4TKWVo1JXfo",
+              `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjcxNjA0NTgsImV4cCI6MTcyNzc2NTI1OCwianRpIjoiNzBjZTg3YzctYjY1ZS00MDljLTlmYTEtZTIwM2QyOGNhZTMzIiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE3MjcxNjA0NTgsImFjY2Vzc19rZXkiOiI2NjRjYjM3MTQyODY2NDVjNmQyNGM5N2EifQ.iGez04sFMC5nfCOrFLvRdJP9hJR3MRDRQsQwsgxPWdM` as string,
           },
         }
       );
       return await room.data;
     } catch (error) {
-      throw error.data.response.message;
+      console.log("100MS", error);
+      return error.data.response.message;
     }
   }
 }
