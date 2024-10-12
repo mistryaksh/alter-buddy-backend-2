@@ -20,7 +20,6 @@ class VideoCallServices {
     callType: string;
   }) {
     try {
-      console.log(callType);
       const room = await axios.post(
         `https://api.100ms.live/v2/rooms`,
         {
@@ -43,7 +42,6 @@ class VideoCallServices {
 
   public async Create100MSRoomCode({ roomId }: { roomId: string }) {
     try {
-      console.log("ROOM ID", roomId);
       const room = await axios.post(
         `https://api.100ms.live/v2/room-codes/room/${roomId}`,
         {},
@@ -56,7 +54,6 @@ class VideoCallServices {
       );
       return await room.data;
     } catch (error) {
-      console.log("100MS", error);
       return error.data.response.message;
     }
   }

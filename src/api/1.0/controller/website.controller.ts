@@ -55,7 +55,7 @@ export class WebsiteController implements IController {
 
   public async GetAllUsers(req: Request, res: Response) {
     try {
-      const users = await User.find().sort({ createdAt: 1 });
+      const users = await User.find().sort({ createdAt: -1 });
       return Ok(res, users);
     } catch (err) {
       return UnAuthorized(res, err);

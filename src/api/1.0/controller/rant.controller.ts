@@ -36,7 +36,6 @@ export class RantController implements IController {
       });
       return Ok(res, ablyToken);
     } catch (err) {
-      console.log(err);
       return UnAuthorized(res, err);
     }
   }
@@ -54,7 +53,6 @@ export class RantController implements IController {
       const streamToken = client.createToken(verified.id, exp);
       return Ok(res, streamToken);
     } catch (err) {
-      console.log(err);
       return UnAuthorized(res, err);
     }
   }

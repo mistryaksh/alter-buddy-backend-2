@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 const CallScheduleSchema = new mongoose.Schema<IMentorCallScheduleProps>(
   {
+    callType: { type: mongoose.Schema.Types.String },
     mentorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Mentor",
@@ -11,13 +12,16 @@ const CallScheduleSchema = new mongoose.Schema<IMentorCallScheduleProps>(
     slotsDate: {
       type: mongoose.Schema.Types.String,
       required: true,
-      default: new Date().toISOString(),
     },
     slots: [
       {
         time: { type: mongoose.Schema.Types.String },
         booked: { type: mongoose.Schema.Types.Boolean, default: false },
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        status: {
+          type: mongoose.Schema.Types.String,
+          enum: ["accepted", "rejected"],
+        },
       },
     ],
   },

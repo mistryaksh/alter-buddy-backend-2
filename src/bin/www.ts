@@ -19,20 +19,14 @@ const io = new Server(server, {
 
 // ! ABLY When a client connects
 io.on("connection", (socket) => {
-  console.log("a user connected:", socket.id);
-
   // Listen for chat request from the first app
   socket.on("requestChat", (data) => {
-    console.log("Chat requested:", data);
-
     // Emit chat request to the second app
     socket.broadcast.emit("receiveChatRequest", data);
   });
 
   // Listen for chat acceptance from the second app
   socket.on("acceptChat", (data, callback) => {
-    console.log("Chat accepted:", data);
-
     // Notify the first app that the chat has been accepted
     socket.broadcast.emit("chatAccepted", data);
 
@@ -42,8 +36,6 @@ io.on("connection", (socket) => {
 
   // Handle leaving the chat
   socket.on("leaveChat", (data, callback) => {
-    console.log("Chat left:", data);
-
     // Notify the other app that the chat was left
     socket.broadcast.emit("chatLeft", data);
 
@@ -59,7 +51,6 @@ io.on("connection", (socket) => {
 // !100MS
 io.on("connection", (socket) => {
   socket.on("GET_CALL_REQUEST", async (data) => {
-    console.log("RECEIVED CALL REQUEST", data);
     const session = await new Chat({
       message: [],
       users: {
@@ -103,7 +94,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("DECLINE_CALL", async (data) => {
-    console.log("CALL DECLINED");
     const chat = await Chat.findOneAndUpdate({
       "sessionDetails.roomCode.mentor": data,
       status: "REJECTED",

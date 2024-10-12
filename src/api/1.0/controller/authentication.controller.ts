@@ -40,6 +40,12 @@ export class AuthenticationController implements IController {
       method: "PUT",
       path: "/mentor/sign-in",
     });
+    this.routes.push({
+      path: "/mentor/:id",
+      handler: this.DeleteMentor,
+      method: "DELETE",
+      middleware: [AuthForAdmin],
+    });
 
     this.routes.push({
       handler: this.AdminSignIn,
@@ -160,6 +166,16 @@ export class AuthenticationController implements IController {
         mobile: newUser.mobile,
         user: newUser,
       });
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  }
+
+  public async DeleteMentor(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const mentor = await Mentor.findByIdAndDelete({ _id: id });
+      return Ok(res, `Mentor deleted!`);
     } catch (err) {
       return UnAuthorized(res, err);
     }

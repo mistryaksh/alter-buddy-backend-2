@@ -3,6 +3,7 @@ export interface IBlogProps {
      subLabel: string;
      body: string;
      comment?: IBlogCommentProps[];
+     blogLink:string
 }
 
 export interface IBlogCommentProps {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IControllerRoutes, IController } from "interface";
-import { AuthForUser } from "middleware";
+import { AuthForAdmin, AuthForUser } from "middleware";
 import { User, BuddyCoins, Transaction } from "model";
 import { RazorPayService } from "services/razorpay.services";
 import { getTokenFromHeader, Ok, UnAuthorized, verifyToken } from "utils";
@@ -39,11 +39,17 @@ export class WalletController implements IController {
 
   constructor() {
     this.routes.push({
-      path: "/buddy-coins",
-      handler: this.GetMyWallet,
+      path: "/wallets",
+      handler: this.GetAllWallets,
       method: "GET",
-      middleware: [AuthForUser],
-    });
+      middleware: [AuthForAdmin],
+    }),
+      this.routes.push({
+        path: "/buddy-coins",
+        handler: this.GetMyWallet,
+        method: "GET",
+        middleware: [AuthForUser],
+      });
     this.routes.push({
       handler: this.CreateBuddyCoinsRecharge,
       method: "POST",
@@ -65,6 +71,15 @@ export class WalletController implements IController {
       path: "/buddy-coins/transactions/my",
     });
   }
+
+  public GetAllWallets = async (req: Request, res: Response) => {
+    try {
+      const wallet = await BuddyCoins.find().populate("userId");
+      return Ok(res, wallet);
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  };
 
   public async GetMyWallet(req: Request, res: Response) {
     try {
@@ -127,7 +142,6 @@ export class WalletController implements IController {
       const wallet = await BuddyCoins.findOne({ userId: user });
       const rechargeAmount =
         wallet.balance + parseInt(paymentStatus.payment.amount.toString());
-      console.log("YOUR RECHARGED AMOUNT IS", rechargeAmount);
       const updatedWallet = await BuddyCoins.findByIdAndUpdate(
         { _id: wallet._id },
         {
@@ -161,22 +175,22 @@ export class WalletController implements IController {
         return Ok(res, paymentStatus);
       }
     } catch (err) {
-      console.log(err);
       return UnAuthorized(res, err);
     }
   }
 
   public async UseBuddyCoins(req: Request, res: Response) {
     try {
-      const { coinsToUsed, useType }: { coinsToUsed: number; useType: string } =
-        req.body;
+      const {
+        coinsToUsed,
+        useType,
+        userId,
+      }: { coinsToUsed: number; useType: string; userId: string } = req.body;
 
       if (!coinsToUsed) {
         return UnAuthorized(res, "missing fields");
       }
-      const token = getTokenFromHeader(req);
-      const verified = verifyToken(token);
-      const user = await User.findById({ _id: verified.id });
+      const user = await User.findById({ _id: userId });
 
       const wallet = await BuddyCoins.findOne({ userId: user._id });
 
@@ -186,7 +200,7 @@ export class WalletController implements IController {
           { $set: { balance: wallet.balance - coinsToUsed } }
         );
         await new Transaction({
-          transactionId: generateCustomTransactionId("BDDY", 10),
+          transactionId: generateCustomTransactionId("BUDDY", 10),
           transactionType: useType,
           closingBal: wallet.balance - coinsToUsed,
           debitAmt: coinsToUsed,
@@ -213,7 +227,6 @@ export class WalletController implements IController {
         .sort({ createdAt: -1 });
       return Ok(res, transaction);
     } catch (err) {
-      console.log(err);
       return UnAuthorized(res, err);
     }
   }
