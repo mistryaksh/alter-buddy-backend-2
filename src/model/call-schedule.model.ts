@@ -22,6 +22,7 @@ const CallScheduleSchema = new mongoose.Schema<IMentorCallScheduleProps>(
           type: mongoose.Schema.Types.String,
           enum: ["accepted", "rejected"],
         },
+        note: { type: mongoose.Schema.Types.String },
       },
     ],
   },

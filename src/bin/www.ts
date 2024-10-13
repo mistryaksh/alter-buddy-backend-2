@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
           host: data.userRoomCode.code,
           mentor: data.mentorRoomCode.code,
         },
-        callType: data.callType ? "audio" : "video",
+        callType: data.callType === "audio" ? "audio" : "video",
         roomId: data.room.id,
         roomName: data.room.name,
       },

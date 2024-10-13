@@ -10,6 +10,7 @@ export interface IMentorCallScheduleProps {
 
 export interface ISlotProps {
   _id?: string;
+  note?: string;
   time: string;
   booked: boolean;
   userId?: mongoose.Schema.Types.ObjectId;

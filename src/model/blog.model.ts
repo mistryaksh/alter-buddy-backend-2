@@ -7,12 +7,6 @@ const BlogSchema = new mongoose.Schema<IBlogProps>(
     label: { type: mongoose.Schema.Types.String, required: true },
     subLabel: { type: mongoose.Schema.Types.String },
     blogLink: { type: mongoose.Schema.Types.String, required: true },
-    comment: [
-      {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        body: { type: mongoose.Schema.Types.String },
-      },
-    ],
   },
   {
     timestamps: true,

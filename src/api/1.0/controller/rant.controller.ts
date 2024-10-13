@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 
 import { IController, IControllerRoutes } from "interface";
 import { getTokenFromHeader, Ok, UnAuthorized, verifyToken } from "utils";
-import config from "config";
 import Ably from "ably";
 import { User } from "model";
 import { StreamClient } from "@stream-io/node-sdk";

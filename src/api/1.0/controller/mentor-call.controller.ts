@@ -3,12 +3,14 @@ import {
   IControllerRoutes,
   IController,
   IMentorCallScheduleProps,
+  ISlotProps,
 } from "interface";
 import { AuthForMentor } from "middleware";
 import { CallSchedule, Chat, Mentor, User } from "model";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
 import moment from "moment";
 import nodemailer from "nodemailer";
+import mongoose from "mongoose";
 
 export class MentorCallSchedule implements IController {
   public routes: IControllerRoutes[] = [];
@@ -69,6 +71,12 @@ export class MentorCallSchedule implements IController {
       handler: this.GetMyCalls,
       method: "GET",
       path: "/mentor/calls",
+    });
+    this.routes.push({
+      handler: this.UpdateSlot,
+      method: "PUT",
+      path: "/mentor/slot/:slotId",
+      middleware: [AuthForMentor],
     });
   }
 
@@ -203,6 +211,32 @@ export class MentorCallSchedule implements IController {
         res,
         `Hey! ${user.name.firstName} ${user.name.lastName} your slot is booked with ${mentor.name.firstName} ${mentor.name.lastName}`
       );
+    } catch (err) {
+      return UnAuthorized(res, err);
+    }
+  }
+
+  public async UpdateSlot(req: Request, res: Response) {
+    try {
+      const { slotId } = req.params;
+      if (!slotId) {
+        return UnAuthorized(res, "failed to update");
+      } else {
+        console.log(new mongoose.Types.ObjectId(slotId));
+        const updated = await CallSchedule.findOneAndUpdate(
+          {
+            slots: { $elemMatch: { _id: new mongoose.Types.ObjectId(slotId) } },
+          },
+          {
+            $set: {
+              "slots.$.note": req.body.note,
+            } as Partial<IMentorCallScheduleProps>,
+          },
+          { new: true }
+        );
+        console.log(updated);
+        return Ok(res, "slot updated");
+      }
     } catch (err) {
       return UnAuthorized(res, err);
     }
