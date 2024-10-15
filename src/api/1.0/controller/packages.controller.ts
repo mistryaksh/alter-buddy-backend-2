@@ -98,6 +98,7 @@ export class PackagesController implements IController {
       const packageExist = await Packages.findOne({
         categoryId,
         packageType,
+        mentorId: id.id,
       });
 
       if (packageExist) {

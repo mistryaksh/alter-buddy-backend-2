@@ -51,7 +51,6 @@ export class VideoCallController implements IController {
         return UnAuthorized(res, "something went wrong");
       }
     } catch (err) {
-      console.log("CONTROLLER", err);
       return UnAuthorized(res, err.data.response.message);
     }
   }

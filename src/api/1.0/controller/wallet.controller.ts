@@ -86,11 +86,15 @@ export class WalletController implements IController {
       const token = getTokenFromHeader(req);
       const verified = verifyToken(token);
       const user = await User.findById({ _id: verified.id });
-      const wallet = await BuddyCoins.findOne({ userId: user });
-      if (!wallet) {
+      const wallet = await BuddyCoins.findOne({ userId: user._id });
+
+      if (!wallet.id) {
         await new BuddyCoins({ balance: 0, userId: user._id }).save();
         return Ok(res, wallet);
-      } else return Ok(res, wallet);
+      } else {
+        console.log(wallet);
+        return Ok(res, wallet);
+      }
     } catch (err) {
       return UnAuthorized(res, err);
     }
@@ -130,52 +134,62 @@ export class WalletController implements IController {
     try {
       const { pLinkId } = req.params;
       if (!pLinkId) {
-        return UnAuthorized(res, "missing payment id");
+        return UnAuthorized(res, "Missing payment ID");
       }
 
       const paymentStatus = await RazorPayService.VerifySignature({
         paymentId: pLinkId,
       });
+
       const token = getTokenFromHeader(req);
       const verified = verifyToken(token);
-      const user = await User.findById({ _id: verified.id });
-      const wallet = await BuddyCoins.findOne({ userId: user });
-      const rechargeAmount =
-        wallet.balance + parseInt(paymentStatus.payment.amount.toString());
-      const updatedWallet = await BuddyCoins.findByIdAndUpdate(
-        { _id: wallet._id },
-        {
-          $set: {
-            balance: rechargeAmount,
-          },
-        }
-      );
-      if (paymentStatus.message === "payment successful") {
-        await new Transaction({
-          closingBal:
-            wallet.balance + parseInt(paymentStatus.payment.amount.toString()),
-          creditAmt: paymentStatus.payment.amount,
-          walletId: updatedWallet._id,
-          userId: user._id,
-          status: "success",
-          transactionType: "recharge successful",
-          transactionId: generateCustomTransactionId("BDDY", 10),
-        }).save();
-        return Ok(res, paymentStatus);
-      } else {
-        await new Transaction({
-          closingBal: wallet.balance,
-          creditAmt: paymentStatus.payment.amount,
-          walletId: updatedWallet._id,
-          userId: user._id,
-          status: "failed",
-          transactionType: "recharge failed",
-          transactionId: generateCustomTransactionId("BDDY", 10),
-        }).save();
-        return Ok(res, paymentStatus);
+
+      const user = await User.findById(verified.id);
+      if (!user) {
+        return UnAuthorized(res, "User not found");
       }
+
+      const wallet = await BuddyCoins.findOne({ userId: user._id });
+      if (!wallet) {
+        return UnAuthorized(res, "Wallet not found");
+      }
+
+      const amount = parseInt(paymentStatus.payment.amount.toString(), 10);
+
+      // Ensure the wallet balance does not go negative
+      if (amount < 0) {
+        return UnAuthorized(res, "Invalid recharge amount");
+      }
+
+      const rechargeAmount = wallet.balance + amount;
+
+      const updatedWallet = await BuddyCoins.findByIdAndUpdate(
+        wallet._id,
+        { $set: { balance: rechargeAmount } },
+        { new: true }
+      );
+
+      const transactionData = {
+        closingBal: rechargeAmount,
+        creditAmt: amount,
+        walletId: updatedWallet._id,
+        userId: user._id,
+        transactionId: generateCustomTransactionId("BDDY", 10),
+      } as any;
+
+      if (paymentStatus.message === "payment successful") {
+        transactionData.status = "success";
+        transactionData.transactionType = "recharge successful";
+      } else {
+        transactionData.status = "failed";
+        transactionData.transactionType = "recharge failed";
+      }
+
+      await new Transaction(transactionData).save();
+      return Ok(res, paymentStatus);
     } catch (err) {
-      return UnAuthorized(res, err);
+      console.error(err); // Log the error for debugging
+      return UnAuthorized(res, "An error occurred");
     }
   }
 
@@ -225,6 +239,7 @@ export class WalletController implements IController {
         .populate("walletId")
         .populate("userId")
         .sort({ createdAt: -1 });
+      console.log("TRANSACTIONS are", transaction);
       return Ok(res, transaction);
     } catch (err) {
       return UnAuthorized(res, err);

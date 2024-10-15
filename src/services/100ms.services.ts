@@ -1,8 +1,49 @@
 import { SDK } from "@100mslive/server-sdk";
 import dotenv from "dotenv";
 import axios from "axios";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { v4 as uuid4 } from "uuid";
 
 dotenv.config();
+
+function generateJwtToken(
+  appAccessKey: string,
+  appSecret: string,
+  roomId: string,
+  userId: string,
+  role: string,
+  expiresIn: string = "24h"
+): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    const payload: JwtPayload = {
+      access_key: appAccessKey,
+      room_id: roomId,
+      user_id: userId,
+      role: role,
+      type: "app",
+      version: 2,
+      iat: Math.floor(Date.now() / 1000),
+      nbf: Math.floor(Date.now() / 1000),
+    };
+
+    jwt.sign(
+      payload,
+      appSecret,
+      {
+        algorithm: "HS256",
+        expiresIn: expiresIn,
+        jwtid: uuid4(),
+      },
+      (err: Error | null, token?: string) => {
+        if (err) {
+          console.error("Error generating token:", err);
+          return reject(err);
+        }
+        resolve(token || null);
+      }
+    );
+  });
+}
 
 class VideoCallServices {
   sdk: SDK = new SDK(
