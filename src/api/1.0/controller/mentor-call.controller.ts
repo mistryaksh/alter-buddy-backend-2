@@ -111,6 +111,7 @@ export class MentorCallSchedule implements IController {
       CallSchedule.insertMany(props);
       return Ok(res, "slots uploaded");
     } catch (err) {
+      console.log(err);
       return UnAuthorized(res, err);
     }
   }
@@ -123,12 +124,12 @@ export class MentorCallSchedule implements IController {
         return UnAuthorized(res, "missing time slots");
       }
       const existedSlotDate = await CallSchedule.findOne({ slotsDate });
-      if (slotsDate === existedSlotDate?.slotsDate) {
-        return UnAuthorized(
-          res,
-          `you have already slots for the date please choose another date or re-create the slots`
-        );
-      }
+      // if (slotsDate === existedSlotDate?.slotsDate) {
+      //   return UnAuthorized(
+      //     res,
+      //     `you have already slots for the date please choose another date or re-create the slots`
+      //   );
+      // }
       const slot = await new CallSchedule({
         mentorId: id.id,
         slotsDate: slotsDate,
@@ -137,6 +138,7 @@ export class MentorCallSchedule implements IController {
 
       return Ok(res, `slots are uploaded for ${slot.slotsDate}`);
     } catch (err) {
+      console.log(err);
       return UnAuthorized(res, err);
     }
   }
