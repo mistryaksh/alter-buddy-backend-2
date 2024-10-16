@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IController, IControllerRoutes } from "interface";
-import { BadRequest, Ok, UnAuthorized } from "utils";
+import { Ok, UnAuthorized } from "utils";
 import { VideoCallService } from "services/100ms.services";
 import { AuthForUser } from "middleware";
 import { Chat } from "model";
@@ -26,6 +26,7 @@ export class VideoCallController implements IController {
   public async SetUpMeeting(req: Request, res: Response) {
     try {
       const { audioCall }: { audioCall: callType } = req.body;
+
       if (!audioCall) {
         return UnAuthorized(res, "define audio or video call");
       }
@@ -41,7 +42,6 @@ export class VideoCallController implements IController {
         const roomCode = await VideoCallService.Create100MSRoomCode({
           roomId: room.id,
         });
-        console.log(roomCode.data);
         return Ok(res, {
           room: room,
           mentorCode: roomCode.data.find((prop: any) => prop.role === "mentor"),
@@ -51,7 +51,11 @@ export class VideoCallController implements IController {
         return UnAuthorized(res, "something went wrong");
       }
     } catch (err) {
-      return UnAuthorized(res, err.data.response.message);
+      if (err.data) {
+        return UnAuthorized(res, err.data.message);
+      } else {
+        return UnAuthorized(res, err);
+      }
     }
   }
 

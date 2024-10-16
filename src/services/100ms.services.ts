@@ -1,56 +1,37 @@
 import { SDK } from "@100mslive/server-sdk";
 import dotenv from "dotenv";
 import axios from "axios";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { v4 as uuid4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
-
-function generateJwtToken(
-  appAccessKey: string,
-  appSecret: string,
-  roomId: string,
-  userId: string,
-  role: string,
-  expiresIn: string = "24h"
-): Promise<string | null> {
-  return new Promise((resolve, reject) => {
-    const payload: JwtPayload = {
-      access_key: appAccessKey,
-      room_id: roomId,
-      user_id: userId,
-      role: role,
-      type: "app",
-      version: 2,
-      iat: Math.floor(Date.now() / 1000),
-      nbf: Math.floor(Date.now() / 1000),
-    };
-
-    jwt.sign(
-      payload,
-      appSecret,
-      {
-        algorithm: "HS256",
-        expiresIn: expiresIn,
-        jwtid: uuid4(),
-      },
-      (err: Error | null, token?: string) => {
-        if (err) {
-          console.error("Error generating token:", err);
-          return reject(err);
-        }
-        resolve(token || null);
-      }
-    );
-  });
-}
 
 class VideoCallServices {
   sdk: SDK = new SDK(
     process.env.REACT_APP_100ms_SDK_KEY!,
     process.env.REACT_APP_100ms_SDK_SECRET!
   );
+  msToken: string = "";
+  public async generateJwtToken() {
+    var payload = {
+      access_key: "664cb3714286645c6d24c97a",
+      type: "management",
+      version: 2,
+      iat: Math.floor(Date.now() / 1000),
+      nbf: Math.floor(Date.now() / 1000),
+    };
 
+    const createToken = jwt.sign(
+      payload,
+      "KRmG-tHyGjU6FKqANwdDHpBIiF8mSBEJLt0A461leWY4KdR5MJTmr6XIXtjqm68b_ijgE_iRosIjzMgtEVk7l4lTeq0bqSQkCaBKPXLHDMRs2Zfb3jPk2-LDr_4XocFJy8DMZSJBWpWPgvpdyODOhluqOFJXUgkrjYqDg-NoxDg=",
+      {
+        algorithm: "HS256",
+        expiresIn: "24h",
+        jwtid: uuidv4(),
+      }
+    );
+    return createToken;
+  }
   public async Create100MSRoom({
     roomName,
     roomDesc,
@@ -61,6 +42,8 @@ class VideoCallServices {
     callType: string;
   }) {
     try {
+      const token = await this.generateJwtToken();
+      this.msToken = token;
       const room = await axios.post(
         `https://api.100ms.live/v2/rooms`,
         {
@@ -71,7 +54,7 @@ class VideoCallServices {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.REACT_APP_100MD_SDK_TOKEN}`,
+            Authorization: `Bearer ${this.msToken}`,
           },
         }
       );
@@ -81,6 +64,7 @@ class VideoCallServices {
     }
   }
 
+  token: string;
   public async Create100MSRoomCode({ roomId }: { roomId: string }) {
     try {
       const room = await axios.post(
@@ -89,7 +73,7 @@ class VideoCallServices {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.REACT_APP_100MD_SDK_TOKEN}`,
+            Authorization: `Bearer ${this.msToken}`,
           },
         }
       );

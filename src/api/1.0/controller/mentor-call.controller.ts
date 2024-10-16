@@ -222,7 +222,6 @@ export class MentorCallSchedule implements IController {
       if (!slotId) {
         return UnAuthorized(res, "failed to update");
       } else {
-        console.log(new mongoose.Types.ObjectId(slotId));
         const updated = await CallSchedule.findOneAndUpdate(
           {
             slots: { $elemMatch: { _id: new mongoose.Types.ObjectId(slotId) } },
@@ -234,7 +233,6 @@ export class MentorCallSchedule implements IController {
           },
           { new: true }
         );
-        console.log(updated);
         return Ok(res, "slot updated");
       }
     } catch (err) {

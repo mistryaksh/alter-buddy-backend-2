@@ -115,10 +115,8 @@ io.on("connection", (socket) => {
       roomId: string;
       userId: string;
     }) => {
-      console.log("MEETING DATA", mentorId, roomId, userId);
 
       if (mentorId?.length && roomId?.length && userId?.length) {
-        console.log(mentorId, roomId, userId);
 
         io.emit("GET_MENTORS_CHAT_DATA", { mentorId, roomId, userId });
       }

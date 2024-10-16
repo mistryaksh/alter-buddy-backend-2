@@ -87,7 +87,6 @@ export class PackagesController implements IController {
         price,
       }: IPackagesProps = req.body;
 
-      console.log(req.body);
       if (!categoryId || !packageName || !packageType || !price) {
         return UnAuthorized(res, "missing fields");
       }
@@ -116,7 +115,6 @@ export class PackagesController implements IController {
       }).save({ validateBeforeSave: true });
       return Ok(res, `${packages.packageName} is created`);
     } catch (err) {
-      console.log(err);
       return UnAuthorized(res, err);
     }
   }
