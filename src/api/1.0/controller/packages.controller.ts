@@ -70,7 +70,9 @@ export class PackagesController implements IController {
 
   public async GetPackageByMentorId(req: Request, res: Response) {
     try {
-      const packages = await Packages.find({ mentorId: req.params.mentorId });
+      const packages = await Packages.find({ mentorId: req.params.mentorId })
+        .populate("categoryId")
+        .populate("mentorId");
       return Ok(res, packages);
     } catch (err) {
       return UnAuthorized(res, err);
@@ -85,9 +87,10 @@ export class PackagesController implements IController {
         packageType,
         description,
         price,
+        subServices,
       }: IPackagesProps = req.body;
-
-      if (!categoryId || !packageName || !packageType || !price) {
+      console.log(req.body);
+      if (!categoryId || !packageName || !packageType) {
         return UnAuthorized(res, "missing fields");
       }
 
@@ -103,7 +106,10 @@ export class PackagesController implements IController {
       if (packageExist) {
         return UnAuthorized(res, "cannot create duplicate package");
       }
-
+      const totalPrice = subServices.reduce(
+        (acc, service) => acc + service.price,
+        0
+      );
       const packages = await new Packages({
         categoryId,
         packageName,
@@ -112,7 +118,9 @@ export class PackagesController implements IController {
         description,
         status: false,
         mentorId: new ObjectId(`${id.id}`),
+        subServices: subServices,
       }).save({ validateBeforeSave: true });
+      console.log("NEW PACKAGES", packages);
       return Ok(res, `${packages.packageName} is created`);
     } catch (err) {
       return UnAuthorized(res, err);

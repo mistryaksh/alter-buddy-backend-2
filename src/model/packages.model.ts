@@ -18,6 +18,12 @@ const PackagesSchema = new mongoose.Schema<IPackagesProps>(
       ref: "Mentor",
       required: true,
     },
+    subServices: [
+      {
+        title: { type: mongoose.Schema.Types.String },
+        price: { type: mongoose.Schema.Types.Number },
+      },
+    ],
   },
   {
     timestamps: true,

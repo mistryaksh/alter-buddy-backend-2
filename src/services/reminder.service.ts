@@ -106,3 +106,30 @@ export const initializeCronJob = () => {
     }
   });
 };
+
+export async function cleanUpOutdatedSlots() {
+  try {
+    console.log("Running slot deleting");
+    // Get today's date in "YYYY-MM-DD" format
+    const today = moment().startOf("day").format("YYYY-MM-DD");
+
+    // Find and delete all schedules with slots before today
+    const result = await CallSchedule.deleteMany({
+      $or: [
+        { slots: { $elemMatch: { time: { $lt: today } } } }, // Matches if any slot time is before today
+        { slotsDate: { $lt: today } }, // Matches if slotsDate is before today
+      ],
+    });
+
+    console.log(
+      `Deleted ${result.deletedCount} outdated schedules successfully`
+    );
+  } catch (error) {
+    console.error("Error while cleaning up outdated schedules:", error);
+  }
+}
+
+// Schedule the function to run daily at midnight
+cron.schedule("0 0 * * *", async () => {
+  await cleanUpOutdatedSlots();
+});

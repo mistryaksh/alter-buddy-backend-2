@@ -120,16 +120,28 @@ export class MentorCallSchedule implements IController {
       const token = getTokenFromHeader(req);
       const id = verifyToken(token);
       const { slots, slotsDate }: IMentorCallScheduleProps = req.body;
+
       if (!slots) {
         return UnAuthorized(res, "missing time slots");
       }
-      const existedSlotDate = await CallSchedule.findOne({ slotsDate });
-      // if (slotsDate === existedSlotDate?.slotsDate) {
-      //   return UnAuthorized(
-      //     res,
-      //     `you have already slots for the date please choose another date or re-create the slots`
-      //   );
-      // }
+
+      // Find if a schedule already exists for the provided date
+      const existedSlotDate = await CallSchedule.findOne({
+        mentorId: id.id,
+        slotsDate,
+      });
+
+      if (existedSlotDate) {
+        // Use updateOne with $addToSet to add new slots without duplicates
+        await CallSchedule.updateOne(
+          { mentorId: id.id, slotsDate },
+          { $addToSet: { slots: { $each: slots } } } // Add only unique slots
+        );
+
+        return Ok(res, `New slots for ${slotsDate} have been added`);
+      }
+
+      // If no slots exist for the date, create a new schedule
       const slot = await new CallSchedule({
         mentorId: id.id,
         slotsDate: slotsDate,
@@ -187,8 +199,8 @@ export class MentorCallSchedule implements IController {
 
   public async BookSlotByUserId(req: Request, res: Response) {
     try {
-      const { userId, slotId, mainId, mentorId, callType } = req.body;
-      if (!userId || !slotId || !mainId || !mentorId || !callType) {
+      const { userId, slotId, mentorId, callType } = req.body;
+      if (!userId || !slotId || !mentorId || !callType) {
         return UnAuthorized(res, "not valid configs found");
       }
 

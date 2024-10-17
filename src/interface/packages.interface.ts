@@ -11,4 +11,8 @@ export interface IPackagesProps {
   updatedAt?: string;
   mentorId: mongoose.Schema.Types.ObjectId;
   status: boolean;
+  subServices?: {
+    title: string;
+    price: number;
+  }[];
 }
