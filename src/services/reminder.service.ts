@@ -1,5 +1,7 @@
 import cron from "node-cron";
 import moment from "moment";
+import momentTz from "moment-timezone";
+
 import nodemailer from "nodemailer";
 import { CallSchedule } from "model";
 import { VideoCallService } from "./100ms.services";
@@ -110,14 +112,24 @@ export const initializeCronJob = () => {
 export async function cleanUpOutdatedSlots() {
   try {
     console.log("Running slot deleting");
-    // Get today's date in "YYYY-MM-DD" format
-    const today = moment().startOf("day").format("YYYY-MM-DD");
 
-    // Find and delete all schedules with slots before today
+    // Get the start of today's date in IST (Indian Standard Time)
+    const todayIST = momentTz.tz("Asia/Kolkata").startOf("day").toDate(); // Start of the day in IST
+
+    const outdatedSchedules = await CallSchedule.find({
+      $or: [
+        { slots: { $elemMatch: { time: { $lt: todayIST } } } }, // Matches if any slot time is before today in IST
+        { slotsDate: { $lt: todayIST } }, // Matches if slotsDate is before today in IST
+      ],
+    });
+
+    console.log(`Found ${outdatedSchedules.length} outdated schedules`);
+
+    // Find and delete all schedules with slots before today in IST
     const result = await CallSchedule.deleteMany({
       $or: [
-        { slots: { $elemMatch: { time: { $lt: today } } } }, // Matches if any slot time is before today
-        { slotsDate: { $lt: today } }, // Matches if slotsDate is before today
+        { slots: { $elemMatch: { time: { $lt: todayIST } } } }, // Matches if any slot time is before today in IST
+        { slotsDate: { $lt: todayIST } }, // Matches if slotsDate is before today in IST
       ],
     });
 
@@ -128,7 +140,6 @@ export async function cleanUpOutdatedSlots() {
     console.error("Error while cleaning up outdated schedules:", error);
   }
 }
-
 // Schedule the function to run daily at midnight
 cron.schedule("0 0 * * *", async () => {
   await cleanUpOutdatedSlots();
