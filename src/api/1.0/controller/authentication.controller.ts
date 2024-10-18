@@ -199,16 +199,10 @@ export class AuthenticationController implements IController {
         !auth.password ||
         !auth.username ||
         !category ||
-        !contact.address ||
         !contact.email ||
         !name.firstName ||
         !name.lastName ||
-        !specialists ||
-        !videoLink ||
-        !description ||
-        !languages ||
-        !image ||
-        !qualification
+        !languages
       ) {
         return UnAuthorized(res, "missing fields");
       } else {

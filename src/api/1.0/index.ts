@@ -14,7 +14,7 @@ import {
   NotificationController,
   RantController,
   PackagesController,
-  VideoCallController,
+  CallController,
 } from "./controller";
 import { IController } from "interface";
 
@@ -55,5 +55,5 @@ export const registerRoutesV1 = (express: Express) => {
   routesHandler(express, new NotificationController());
   routesHandler(express, new RantController());
   routesHandler(express, new PackagesController());
-  routesHandler(express, new VideoCallController());
+  routesHandler(express, new CallController());
 };

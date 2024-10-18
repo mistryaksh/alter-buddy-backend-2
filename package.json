@@ -48,7 +48,7 @@
     "@types/uuid": "^9.0.4",
     "ably": "^2.3.1",
     "agora-access-token": "^2.0.4",
-    "axios": "^1.7.5",
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -76,7 +76,7 @@
     "stream-chat": "^8.37.0",
     "stripe": "^14.1.0",
     "twilio": "^4.17.0",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "ws": "^8.14.2"
   }
 }

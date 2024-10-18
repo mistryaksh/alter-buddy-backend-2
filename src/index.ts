@@ -8,7 +8,6 @@ import { registerRoutesV1 } from "api";
 import cookieParser from "cookie-parser";
 import config from "config";
 import { createClient } from "redis";
-import "./utils/cron";
 
 class App {
   express: Express;
