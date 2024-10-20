@@ -301,7 +301,7 @@ export class AuthenticationController implements IController {
                          service: "gmail",
                          auth: {
                               user: "alterbuddy8@gmail.com",
-                              pass: "ngbtwrjshngkwxqo",
+                              pass: "srzmdotzudkkvnkc",
                          },
                     });
                     transporter.sendMail(mailOptions, function (error, info) {
@@ -568,7 +568,7 @@ export class AuthenticationController implements IController {
                               service: "gmail",
                               auth: {
                                    user: "alterbuddy8@gmail.com",
-                                   pass: "ngbtwrjshngkwxqo",
+                                   pass: "srzmdotzudkkvnkc",
                               },
                          });
                          transporter.sendMail(

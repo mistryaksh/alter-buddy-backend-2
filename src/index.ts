@@ -7,6 +7,7 @@ import { errorHandler, notFoundMiddleware } from "./middleware";
 import { registerRoutesV1 } from "api";
 import cookieParser from "cookie-parser";
 import config from "config";
+import "./utils/cron.utils";
 
 class App {
      express: Express;
@@ -48,10 +49,10 @@ class App {
 
      private async connectDb() {
           try {
-               const database = await mongoose.connect(
-                    config.get("DB_PATH"),
-                    {}
-               );
+               const database = await mongoose.connect(config.get("DB_PATH"), {
+                    serverSelectionTimeoutMS: 30000,
+                    socketTimeoutMS: 45000,
+               });
                console.log(
                     "connected to database",
                     database.connection.db.databaseName
