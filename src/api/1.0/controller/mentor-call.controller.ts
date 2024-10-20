@@ -43,7 +43,7 @@ export class MentorCallSchedule implements IController {
           this.routes.push({
                handler: this.GetSlotByMentorId,
                method: "GET",
-               path: "/mentor/schedule/:mentorId",
+               path: "/mentor/schedule/get/:mentorId",
           });
           this.routes.push({
                handler: this.BookSlotByUserId,
