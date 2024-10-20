@@ -31,7 +31,14 @@ class App {
           this.express.set("port", 8080);
           this.express.use(cookieParser());
           this.express.use(morgan("dev"));
-          this.express.use(cors({ origin: "*" }));
+          this.express.use(
+               cors({
+                    origin: "*",
+                    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+                    credentials: true, // If needed
+               })
+          );
           // this.express.use(createClient({}));
      }
 
