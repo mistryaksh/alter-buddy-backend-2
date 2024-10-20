@@ -6,6 +6,8 @@ export interface IMentorCallScheduleProps {
      mentorId: mongoose.Schema.Types.ObjectId;
      slots: ISlotProps[];
      slotsDate: string;
+     mentorCode: string;
+     userCode: string;
 }
 
 export interface ISlotProps {

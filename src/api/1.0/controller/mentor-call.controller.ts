@@ -6,11 +6,12 @@ import {
      ISlotProps,
 } from "interface";
 import { AuthForMentor } from "middleware";
-import { CallSchedule, Chat, Mentor, User } from "model";
+import { BuddyCoins, CallSchedule, Chat, Mentor, Packages, User } from "model";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
 import moment from "moment-timezone";
 import nodemailer from "nodemailer";
 import mongoose from "mongoose";
+import { WalletController } from "./wallet.controller";
 
 export class MentorCallSchedule implements IController {
      public routes: IControllerRoutes[] = [];
@@ -219,7 +220,14 @@ export class MentorCallSchedule implements IController {
                const slot = await CallSchedule.findOne({ _id: slotId });
                const user = await User.findOne({ _id: userId });
                const mentor = await Mentor.findOne({ _id: mentorId });
-
+               const packages = await Packages.findOne({
+                    packageType: callType,
+                    mentorId: mentorId._id,
+               });
+               await BuddyCoins.findOneAndUpdate(
+                    { userId: user._id },
+                    { balance: slot }
+               );
                const updateSlot = await CallSchedule.findOneAndUpdate(
                     {
                          slots: { $elemMatch: { _id: slotId } },
