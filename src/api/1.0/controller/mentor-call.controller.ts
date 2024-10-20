@@ -8,7 +8,7 @@ import {
 import { AuthForMentor } from "middleware";
 import { CallSchedule, Chat, Mentor, User } from "model";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
-import moment from "moment";
+import moment from "moment-timezone";
 import nodemailer from "nodemailer";
 import mongoose from "mongoose";
 
@@ -193,12 +193,16 @@ export class MentorCallSchedule implements IController {
      public async GetSlotByMentorId(req: Request, res: Response) {
           try {
                const mentorId = req.params.mentorId;
-               const today = moment().startOf("day").toISOString();
+               const today = moment()
+                    .tz("Asia/Kolkata")
+                    .startOf("day")
+                    .toISOString();
 
                const slots = await CallSchedule.find({
                     mentorId: mentorId,
                     slotsDate: { $gt: today },
                }).populate("slots.userId");
+               console.log(slots);
                return Ok(res, slots);
           } catch (err) {
                return UnAuthorized(res, err);
