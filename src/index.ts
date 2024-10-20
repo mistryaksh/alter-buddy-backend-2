@@ -35,8 +35,8 @@ class App {
                cors({
                     origin: "*",
                     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
-                    credentials: true, // If needed
+                    // allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+                    // credentials: true, // If needed
                })
           );
           // this.express.use(createClient({}));
