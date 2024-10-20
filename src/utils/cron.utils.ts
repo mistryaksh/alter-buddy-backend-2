@@ -56,7 +56,7 @@ cron.schedule("* * * * *", async () => {
                          });
                          console.log(
                               "SENDING MAIL",
-                              schedule.collection.countDocuments()
+                              await schedule.collection.countDocuments()
                          );
                     }
                }
