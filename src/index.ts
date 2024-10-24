@@ -7,7 +7,7 @@ import { errorHandler, notFoundMiddleware } from "./middleware";
 import { registerRoutesV1 } from "api";
 import cookieParser from "cookie-parser";
 import config from "config";
-import "./utils/cron.utils";
+// import "./utils/cron.utils";
 
 class App {
      express: Express;
