@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 
 const CallScheduleSchema = new mongoose.Schema<IMentorCallScheduleProps>(
      {
-          mentorCode: { type: mongoose.Schema.Types.String, required: true },
-          userCode: { type: mongoose.Schema.Types.String, required: true },
+          mentorCode: { type: mongoose.Schema.Types.String,  },
+          userCode: { type: mongoose.Schema.Types.String, },
           callType: { type: mongoose.Schema.Types.String },
           mentorId: {
                type: mongoose.Schema.Types.ObjectId,
