@@ -17,6 +17,7 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/morgan": "^1.9.2",
     "@types/node": "^20.8.0",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.11",
     "@types/pubnub": "^7.3.3",
     "@types/socket.io": "^3.0.2",
@@ -35,9 +36,9 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "clean": "rimraf ./build/* && rimraf ./logs/*",
+    "clean": "rimraf ./build && rimraf ./logs",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "start": "nodemon --watch 'src/**/*' -e ts --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/bin/www.ts"
+    "start": "nodemon --watch \"src/**/*\" -e ts --exec \"node --max-old-space-size=4096 -r ts-node/register -r tsconfig-paths/register ./src/bin/www.ts\""
   },
   "dependencies": {
     "@100mslive/server-sdk": "^0.3.0",
@@ -62,9 +63,11 @@
     "getstream": "^8.4.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.30.1",
+    "moment-timezone": "^0.5.46",
     "mongodb": "^6.8.0",
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.5",
     "pubnub": "^7.3.3",
     "razorpay": "^2.9.4",
@@ -73,7 +76,7 @@
     "stream-chat": "^8.37.0",
     "stripe": "^14.1.0",
     "twilio": "^4.17.0",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "ws": "^8.14.2"
   }
 }

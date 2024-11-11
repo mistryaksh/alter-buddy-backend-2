@@ -4,7 +4,7 @@ export * from "./wallet.interface";
 export * from "./mentor.interface";
 export * from "./blog.interface";
 export * from "./top-mentor.interface";
-export * from "./mentor-call-schedule.interface";
+export * from "./call-schedule.interface";
 export * from "./post.interface";
 export * from "./notification.interface";
 export * from "./transaction.interface";
