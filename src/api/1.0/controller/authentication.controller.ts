@@ -8,7 +8,7 @@ import {
 } from "interface";
 import { Mentor, User, BuddyCoins } from "model";
 import { Ok, UnAuthorized, getTokenFromHeader, verifyToken } from "utils";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "config";
 import { IUserProps } from "interface/user.interface";

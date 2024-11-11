@@ -13,7 +13,7 @@ import {
   getTokenFromHeader,
   verifyToken,
 } from "utils";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export class AccountController implements IController {
   public routes: IControllerRoutes[] = [];
